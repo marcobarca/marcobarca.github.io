@@ -35,20 +35,10 @@
   }
 }
 
-.card {
-  padding: 2em;
-  background-color: #000;
-}
-
 
 body {
   background-color: #000; /* Replace with your desired background color */
 }
-
-.read-the-docs {
-  color: #888;
-}
-
 
 
 body {
@@ -93,10 +83,37 @@ body {
 
 h2.profession {
   margin-top: 5px; /* Adjust the margin-top as needed */
-  font-family: 'Barlow', sans-serif; /* Use the font name you selected */
+  font-family: 'monaco';
 }
 
 .back {
   text-align: center;
   padding: 20px; /* Adjust the padding as needed */
+}
+
+.typing-text {
+  font-family: 'monaco';
+  background-color: #000;
+  color: #00ff00;
+  padding: 10px;
+  margin: 0;
+  font-size: 14px;
+}
+
+#text-output {
+  color: #00ff00;
+  white-space: pre;
+  overflow: hidden;
+  border-right: 2px solid #00ff00;
+  padding-right: 2px;
+  animation: typing 2s steps(30) infinite;
+}
+
+@keyframes typing {
+  from {
+      width: 0;
+  }
+  to {
+      width: 100%;
+  }
 }
