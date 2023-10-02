@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Raleway:900&display=swap");
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -14,8 +16,8 @@
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.logo.alien:hover {
+  filter: drop-shadow(0 0 5em #a6fd01);
 }
 
 @keyframes logo-spin {
@@ -35,8 +37,66 @@
 
 .card {
   padding: 2em;
+  background-color: #000;
+}
+
+
+body {
+  background-color: #000; /* Replace with your desired background color */
 }
 
 .read-the-docs {
   color: #888;
+}
+
+
+
+body {
+    margin: 0px;
+}
+
+#container {
+    position: absolute;
+    margin: auto;
+    width: 100vw;
+    height: 80pt;
+    top: 0;
+    bottom: 0;
+
+    filter: url(#threshold) blur(0.6px);
+}
+
+#text1,
+#text2 {
+    position: absolute;
+    width: 100%;
+    display: inline-block;
+
+    font-family: "Raleway", sans-serif;
+    font-size: 80pt;
+
+    text-align: center;
+
+    user-select: none;
+}
+
+.social-logo {
+  margin-top: 20px; /* Adjust the margin-top as needed */
+}
+
+.name {
+  color: #a6fd01;
+  margin-top: 5px; /* Adjust the margin-top as needed */
+  margin-bottom: 5px; /* Adjust the margin-top as needed */
+  font-family: 'Barlow', sans-serif; /* Use the font name you selected */
+}
+
+h2.profession {
+  margin-top: 5px; /* Adjust the margin-top as needed */
+  font-family: 'Barlow', sans-serif; /* Use the font name you selected */
+}
+
+.back {
+  text-align: center;
+  padding: 20px; /* Adjust the padding as needed */
 }
