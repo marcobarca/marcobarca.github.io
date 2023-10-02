@@ -20,6 +20,26 @@
   filter: drop-shadow(0 0 5em #a6fd01);
 }
 
+.logo.alien {
+  width: 100px;
+  height: 100px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    flex-direction: row;
+  }
+
+  .content {
+    margin: 0;
+  }
+
+  .logo.alien {
+    width: 200px;
+    height: 200px;
+  }
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -56,14 +76,18 @@ body {
 }
 
 #container {
-    position: absolute;
-    margin: auto;
-    width: 100vw;
-    height: 80pt;
-    top: 0;
-    bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 
     filter: url(#threshold) blur(0.6px);
+}
+
+.content {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 #text1,
@@ -81,7 +105,9 @@ body {
 }
 
 .social-logo {
-  margin-top: 20px; /* Adjust the margin-top as needed */
+  width: 50px;
+  height: 50px;
+  margin: 10px;
 }
 
 .name {
