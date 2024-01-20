@@ -6,9 +6,9 @@ import './App.css';
 
 function App() {
   const sentences = [
-    "Cybersecurity enthusiast.",
-    "Passionate about any kind of software development.",
-    "I love learning new things.",
+    "Cybersecurity enthusiast 👨🏻‍💻",
+    "Passionate about AI 🧠",
+    "In love with learning new things.",
     "Problem solver.",
   ];
   
