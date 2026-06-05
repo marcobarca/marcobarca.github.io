@@ -9,7 +9,6 @@ import './App.css';
 
 /* ── Content ─────────────────────────────────────────────────────────── */
 const CONTENT = {
-  sentences: ['Solution Architect', 'Cloud & AI Engineer', 'Innovation Team Lead', 'Passionate about Generative AI'],
   nav: { about: 'About', side: 'Side Projects', experience: 'Experience', education: 'Education', contact: 'Contact' },
   blog: { title: 'Posts', readMore: 'Read →', minRead: 'min read', back: '← Back to posts' },
   hero: { cta1: 'Learn more', cta2: 'My projects' },
@@ -68,46 +67,6 @@ const CONTENT = {
   footer: 'Made with',
   footerBy: 'by',
 };
-
-/* ── Typewriter hook ───────────────────────────────────────────────── */
-function useTypewriter(sentences: readonly string[], resetKey: string) {
-  const [display, setDisplay] = useState('');
-  const [sentIdx, setSentIdx] = useState(0);
-  const [charIdx, setCharIdx] = useState(0);
-  const [deleting, setDeleting] = useState(false);
-
-  useEffect(() => {
-    setDisplay('');
-    setSentIdx(0);
-    setCharIdx(0);
-    setDeleting(false);
-  }, [resetKey]);
-
-  useEffect(() => {
-    const current = sentences[sentIdx];
-    let delay = deleting ? 50 : 100;
-    if (!deleting && charIdx === current.length) delay = 2000;
-
-    const timer = setTimeout(() => {
-      if (!deleting && charIdx < current.length) {
-        setDisplay(current.slice(0, charIdx + 1));
-        setCharIdx(c => c + 1);
-      } else if (!deleting && charIdx === current.length) {
-        setDeleting(true);
-      } else if (deleting && charIdx > 0) {
-        setDisplay(current.slice(0, charIdx - 1));
-        setCharIdx(c => c - 1);
-      } else {
-        setDeleting(false);
-        setSentIdx(i => (i + 1) % sentences.length);
-      }
-    }, delay);
-
-    return () => clearTimeout(timer);
-  }, [charIdx, deleting, sentIdx, sentences]);
-
-  return display;
-}
 
 /* ── Fade-in hook ──────────────────────────────────────────────────── */
 function useFadeIn() {
@@ -240,7 +199,6 @@ function PostModal({ post, backLabel, onClose }: { post: Post; backLabel: string
 export default function App() {
   const c = CONTENT;
 
-  const typed = useTypewriter(c.sentences, '');
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -347,12 +305,6 @@ export default function App() {
 
             <h1 className="hero-name">Marco Barca</h1>
             <p className="hero-subtitle">Computer Engineer</p>
-
-            <div className="hero-typewriter">
-              <span className="tw-prompt">$ </span>
-              <span className="tw-text">{typed}</span>
-              <span className="tw-cursor">▊</span>
-            </div>
 
             <div className="hero-cta">
               <button className="btn-primary" onClick={() => scrollTo('about')}>{c.hero.cta1}</button>
