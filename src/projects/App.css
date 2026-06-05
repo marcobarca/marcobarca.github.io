@@ -302,6 +302,7 @@
 /* Posts terminal in hero */
 .hero-posts {
   position: relative;
+  min-width: 0;
 }
 
 .hero-posts-label {
@@ -316,6 +317,7 @@
 
 .hero-posts .terminal-window {
   max-width: 100%;
+  width: 100%;
 }
 
 /* Social icons row */
@@ -987,6 +989,9 @@
   font-size: 0.75rem;
   color: #475569;
   flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .terminal-body {
@@ -1047,6 +1052,34 @@
 .t-time  { color: #334155; font-size: 0.72rem; white-space: nowrap; }
 
 .t-cursor-line { margin-top: 0.25rem; margin-bottom: 0; }
+
+@media (max-width: 860px) {
+  .terminal-body {
+    padding: 1rem 1rem 1.25rem;
+  }
+
+  .t-post-row {
+    padding: 0.45rem 0.4rem;
+  }
+
+  .t-tags {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .terminal-body {
+    padding: 0.75rem 0.75rem 1rem;
+  }
+
+  .t-title {
+    font-size: 0.78rem;
+  }
+
+  .t-time {
+    display: none;
+  }
+}
 
 /* ── Post Modal ───────────────────────────────── */
 .modal-backdrop {
