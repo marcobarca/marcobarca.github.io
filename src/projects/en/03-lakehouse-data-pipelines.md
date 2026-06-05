@@ -1,5 +1,5 @@
 ---
-title: "Winkler Chimica - Lakehouse & Data Pipelines"
+title: "Lakehouse & Data Pipelines"
 tags: ["PySpark", "Microsoft Fabric", "PostgreSQL", "OAuth2", "Medallion"]
 period: "Feb 2024 — Ongoing"
 company: "NPO Torino s.r.l."

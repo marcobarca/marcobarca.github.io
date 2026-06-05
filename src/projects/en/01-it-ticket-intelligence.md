@@ -1,5 +1,5 @@
 ---
-title: "CNH - IT Ticket Intelligence"
+title: "IT Ticket Intelligence"
 tags: ["Python", "Azure AI Foundry", "HDBSCAN", "UMAP", "ServiceNow"]
 period: "Feb 2024 — Ongoing"
 company: "NPO Torino s.r.l."

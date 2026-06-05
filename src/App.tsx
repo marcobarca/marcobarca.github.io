@@ -3,9 +3,9 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import githubLogo from './assets/github.svg';
 import linkedinLogo from './assets/linkedin.svg';
-import { postsByLang, type Post } from './posts';
-import { workProjectsByLang, type WorkProject } from './workProjects';
-import './App.css';
+import { posts, type Post } from './posts';
+import { workProjects, type WorkProject } from './workProjects';
+import './projects/App.css';
 
 /* ── Content ─────────────────────────────────────────────────────────── */
 const CONTENT = {
@@ -203,11 +203,9 @@ export default function App() {
   const [activeSection, setActiveSection] = useState('hero');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const posts = postsByLang['en'];
   const selectedPost = selectedSlug ? posts.find(p => p.slug === selectedSlug) ?? null : null;
 
   const [selectedWorkSlug, setSelectedWorkSlug] = useState<string | null>(null);
-  const workProjects = workProjectsByLang['en'];
   const selectedWorkProject = selectedWorkSlug ? workProjects.find(p => p.slug === selectedWorkSlug) ?? null : null;
 
   const CAROUSEL_VISIBLE = 3;
@@ -309,6 +307,7 @@ export default function App() {
             <div className="hero-cta">
               <button className="btn-primary" onClick={() => scrollTo('about')}>{c.hero.cta1}</button>
               <button className="btn-outline" onClick={() => scrollTo('projects')}>{c.hero.cta2}</button>
+              <a className="btn-outline" href="/CV-Marco-Barca.pdf" download aria-label="Download CV">Download CV</a>
             </div>
           </div>
 
