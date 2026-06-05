@@ -1030,6 +1030,9 @@
   color: #a5f3fc;
   font-size: 0.82rem;
   line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .t-meta {
