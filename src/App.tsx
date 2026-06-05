@@ -208,11 +208,23 @@ export default function App() {
   const [selectedWorkSlug, setSelectedWorkSlug] = useState<string | null>(null);
   const selectedWorkProject = selectedWorkSlug ? workProjects.find(p => p.slug === selectedWorkSlug) ?? null : null;
 
-  const CAROUSEL_VISIBLE = 3;
+  const [visibleCount, setVisibleCount] = useState(() => window.innerWidth <= 700 ? 1 : 3);
   const [carouselIdx, setCarouselIdx] = useState(0);
   const carouselTotal = c.projects.items.length;
   const carouselPrev = () => setCarouselIdx(i => Math.max(0, i - 1));
-  const carouselNext = () => setCarouselIdx(i => Math.min(carouselTotal - CAROUSEL_VISIBLE, i + 1));
+  const carouselNext = () => setCarouselIdx(i => Math.min(carouselTotal - visibleCount, i + 1));
+
+  useEffect(() => {
+    const onResize = () => {
+      const next = window.innerWidth <= 700 ? 1 : 3;
+      setVisibleCount(prev => {
+        if (prev !== next) setCarouselIdx(0);
+        return next;
+      });
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -432,7 +444,7 @@ export default function App() {
           </button>
           <div className="carousel-viewport">
             <div className="carousel-track" key={carouselIdx}>
-              {c.projects.items.slice(carouselIdx, carouselIdx + CAROUSEL_VISIBLE).map(({ title, description, tags, link }) => (
+              {c.projects.items.slice(carouselIdx, carouselIdx + visibleCount).map(({ title, description, tags, link }) => (
                 <div key={title} className="glass-card side-project-card">
                   <div className="project-card-body">
                     <div className="project-card-top">
@@ -456,14 +468,14 @@ export default function App() {
           <button
             className="carousel-btn"
             onClick={carouselNext}
-            disabled={carouselIdx + CAROUSEL_VISIBLE >= carouselTotal}
+            disabled={carouselIdx + visibleCount >= carouselTotal}
             aria-label="Next"
           >
             &#8594;
           </button>
         </div>
         <div className="carousel-dots">
-          {Array.from({ length: carouselTotal - CAROUSEL_VISIBLE + 1 }).map((_, i) => (
+          {Array.from({ length: carouselTotal - visibleCount + 1 }).map((_, i) => (
             <button
               key={i}
               className={`carousel-dot ${i === carouselIdx ? 'active' : ''}`}

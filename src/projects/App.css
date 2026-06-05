@@ -716,7 +716,14 @@
 }
 
 @media (max-width: 700px) {
-  .carousel-track { grid-template-columns: 1fr; }
+  .carousel-track {
+    grid-template-columns: 1fr;
+  }
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
 }
 
 .carousel-btn {
