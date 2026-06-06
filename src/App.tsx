@@ -37,9 +37,9 @@ const CONTENT = {
     careerLabel: 'Career', workProjectsLabel: 'Projects',
     badgeWork: 'Work', badgeEdu: 'Education', badgeAward: '🏆 Award',
     items: [
-      { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', period: 'Jan 2026 — Present', type: 'work' as const, description: 'Designing and leading the end-to-end architecture of a B2C SaaS platform for live online language lessons: modular monolith (Spring Boot), DDD-light domain model, Azure AD B2C, Stripe payments, and Azure Blob Storage. Responsible for technical governance: bounded context design, API definition, security model (RBAC + ownership), and incremental MVP delivery plan.' },
-      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', period: 'Feb 2024 — Present', type: 'work' as const, description: 'Led the Innovation Team driving AI, cloud, and data engineering initiatives from opportunity assessment and pre-sales through solution architecture, PoC delivery, and production rollout. Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and a multi-stage LLM orchestration layer (Azure AI Foundry) for automated text normalisation, topic labelling, and knowledge base generation. Designed and productised a multi-tenant SaaS platform that fully automates telephone survey workflows — serverless event-driven architecture (Azure Functions, Azure Communication Services), Azure Speech transcription, LangChain report generation, RAG conversational agent (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), and multi-tenant isolation via Azure Entra ID, deployed with Azure Pipelines CI/CD. Delivered data pipeline and lakehouse architectures across multiple client engagements: ERP integrations (Zucchetti REST API, OAuth2), Medallion architecture on PostgreSQL, and data processing workflows with PySpark and Microsoft Fabric.' },
-      { role: '2nd Place @ Encode x Algorand Hackathon', company: 'Encode Club', period: 'Jul 2022', type: 'award' as const, description: 'A 4-week hackathon focused on Algorand Blockchain. With my team I won 2nd place by developing a decentralized crowdfunding platform.' },
+      { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', period: 'Jan 2026 — Present', type: 'work' as const, description: <ul><li>Designing end-to-end architecture of a B2C SaaS platform for live online language lessons — modular monolith (Spring Boot), DDD-light, Azure AD B2C, Stripe, Azure Blob Storage</li><li>Technical governance: bounded context design, API definition, RBAC security model, and incremental MVP delivery plan</li></ul> },
+      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', period: 'Feb 2024 — Present', type: 'work' as const, description: <ul><li>Led the Innovation Team driving AI, cloud, and data engineering initiatives from pre-sales and opportunity assessment through architecture, PoC delivery, and production rollout</li><li>Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and Azure AI Foundry LLM orchestration for automated topic labelling and knowledge base generation</li><li>Designed and productised a multi-tenant SaaS platform automating telephone survey workflows: Azure Functions, Azure Speech, LangChain, RAG (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), Entra ID isolation, Azure Pipelines CI/CD</li><li>Delivered data pipeline and lakehouse architectures: Medallion on PostgreSQL, PySpark & Microsoft Fabric, ERP integrations (Zucchetti REST API, OAuth2)</li></ul> },
+      { role: '2nd Place @ Encode x Algorand Hackathon', company: 'Encode Club', period: 'Jul 2022', type: 'award' as const, description: <ul><li>4-week hackathon focused on Algorand Blockchain</li><li>Developed a decentralised crowdfunding platform with my team</li></ul> },
     ],
   },
   education: {
@@ -231,7 +231,7 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 60);
-      const ids = ['hero', 'about', 'experience', 'side', 'education', 'contact', 'posts'];
+      const ids = ['hero', 'about', 'experience', 'side', 'education', 'posts', 'contact'];
       for (const id of [...ids].reverse()) {
         const el = document.getElementById(id);
         if (el && window.scrollY >= el.offsetTop - 120) {
@@ -254,8 +254,8 @@ export default function App() {
     { id: 'experience', label: c.nav.experience },
     { id: 'side',       label: c.nav.side },
     { id: 'education',  label: c.nav.education },
-    { id: 'contact',    label: c.nav.contact },
     { id: 'posts',      label: c.nav.posts },
+    { id: 'contact',    label: c.nav.contact },
   ];
 
   const badgeLabel = (type: 'work' | 'edu' | 'award') =>
@@ -394,7 +394,7 @@ export default function App() {
                     </div>
                     <h3 className="timeline-role">{role}</h3>
                     <p className="timeline-company">{company}</p>
-                    <p className="timeline-desc">{description}</p>
+                    <div className="timeline-desc">{description}</div>
                   </div>
                 </div>
               ))}
@@ -539,28 +539,8 @@ export default function App() {
         />
       )}
 
-      {/* ── Contact ── */}
-      <Section id="contact">
-        <SectionTitle>{c.contact.title}</SectionTitle>
-        <p className="contact-subtitle">{c.contact.subtitle}</p>
-        <div className="contact-grid">
-          {c.contact.items.map(({ icon, label, value, href }) => (
-            <a key={icon} href={href} target={icon === 'github' || icon === 'linkedin' ? '_blank' : undefined} rel="noreferrer" className="glass-card contact-card">
-              <span className="contact-card-icon">
-                {icon === 'email'    && <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>}
-                {icon === 'phone'    && <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 1.4h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>}
-                {icon === 'github'   && <img src={githubLogo}   alt="" style={{ width: 22, height: 22, filter: 'invert(1) brightness(0.75)' }} />}
-                {icon === 'linkedin' && <img src={linkedinLogo} alt="" style={{ width: 22, height: 22, filter: 'invert(1) brightness(0.75)' }} />}
-              </span>
-              <span className="contact-card-label">{label}</span>
-              <span className="contact-card-value">{value}</span>
-            </a>
-          ))}
-        </div>
-      </Section>
-
       {/* ── Posts ── */}
-      <Section id="posts" className="alt-bg">
+      <Section id="posts">
         <SectionTitle>{c.blog.title}</SectionTitle>
         <div className="posts-grid">
           {posts.map(post => (
@@ -579,6 +559,26 @@ export default function App() {
               </div>
               <span className="project-link post-card-link">{c.blog.readMore}</span>
             </button>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── Contact ── */}
+      <Section id="contact" className="alt-bg">
+        <SectionTitle>{c.contact.title}</SectionTitle>
+        <p className="contact-subtitle">{c.contact.subtitle}</p>
+        <div className="contact-grid">
+          {c.contact.items.map(({ icon, label, value, href }) => (
+            <a key={icon} href={href} target={icon === 'github' || icon === 'linkedin' ? '_blank' : undefined} rel="noreferrer" className="glass-card contact-card">
+              <span className="contact-card-icon">
+                {icon === 'email'    && <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>}
+                {icon === 'phone'    && <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 1.4h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>}
+                {icon === 'github'   && <img src={githubLogo}   alt="" style={{ width: 22, height: 22, filter: 'invert(1) brightness(0.75)' }} />}
+                {icon === 'linkedin' && <img src={linkedinLogo} alt="" style={{ width: 22, height: 22, filter: 'invert(1) brightness(0.75)' }} />}
+              </span>
+              <span className="contact-card-label">{label}</span>
+              <span className="contact-card-value">{value}</span>
+            </a>
           ))}
         </div>
       </Section>

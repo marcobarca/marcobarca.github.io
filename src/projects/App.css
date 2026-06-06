@@ -961,6 +961,27 @@
   line-height: 1.65;
 }
 
+.timeline-desc ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-left: 1.1rem;
+  list-style: none;
+}
+
+.timeline-desc ul li {
+  position: relative;
+  padding-left: 0.1rem;
+}
+
+.timeline-desc ul li::before {
+  content: '—';
+  position: absolute;
+  left: -1.1rem;
+  color: var(--purple);
+  font-weight: 600;
+}
+
 /* ── Terminal window ─────────────────────────── */
 .terminal-window {
   border-radius: 10px;
