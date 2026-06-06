@@ -181,7 +181,9 @@ function AnimatedBeam({
     };
     calc();
     window.addEventListener('resize', calc);
-    return () => window.removeEventListener('resize', calc);
+    const ro = new ResizeObserver(calc);
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => { window.removeEventListener('resize', calc); ro.disconnect(); };
   }, [containerRef, fromRef, toRef, recalcDep]);
 
   useLayoutEffect(() => {
@@ -372,12 +374,15 @@ export default function App() {
         const p0Natural = p0Top - prev.paddingTop;
         const paddingTop    = Math.max(0, v3CenterY  - p0Natural - h0   / 2);
         const npoMarginTop  = Math.max(0, npoCenterY - v3CenterY - h0   / 2 - hNpo / 2);
+        if (prev.paddingTop === paddingTop && prev.npoMarginTop === npoMarginTop) return prev;
         return { paddingTop, npoMarginTop };
       });
     };
     calc();
     window.addEventListener('resize', calc);
-    return () => window.removeEventListener('resize', calc);
+    const ro = new ResizeObserver(calc);
+    if (expContainerRef.current) ro.observe(expContainerRef.current);
+    return () => { window.removeEventListener('resize', calc); ro.disconnect(); };
   }, []);
 
   const expContainerRef = useRef<HTMLDivElement>(null);
