@@ -9,7 +9,7 @@ import './projects/App.css';
 
 /* ── Content ─────────────────────────────────────────────────────────── */
 const CONTENT = {
-  nav: { about: 'About', side: 'Side Projects', experience: 'Experience', education: 'Education', contact: 'Contact' },
+  nav: { about: 'About', posts: 'Posts', experience: 'Experience', side: 'Side Projects', education: 'Education', contact: 'Contact' },
   blog: { title: 'Posts', readMore: 'Read →', minRead: 'min read', back: '← Back to posts' },
   hero: { cta1: 'Learn more', cta2: 'My projects' },
   about: {
@@ -38,8 +38,7 @@ const CONTENT = {
     badgeWork: 'Work', badgeEdu: 'Education', badgeAward: '🏆 Award',
     items: [
       { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', period: 'Jan 2026 — Present', type: 'work' as const, description: 'Designing and leading the end-to-end architecture of a B2C SaaS platform for live online language lessons: modular monolith (Spring Boot), DDD-light domain model, Azure AD B2C, Stripe payments, and Azure Blob Storage. Responsible for technical governance: bounded context design, API definition, security model (RBAC + ownership), and incremental MVP delivery plan.' },
-      { role: 'Innovation Team Lead', company: 'NPO Torino s.r.l.', period: 'Jan 2025 — Present', type: 'work' as const, description: 'Led pre-sales and solution design for strategic clients: requirements analysis, high-level architecture, effort estimation, and PoC delivery. Driving internal LLM adoption with agentic workflows, AI-assisted development tooling, and hands-on workshops to upskill developers.' },
-      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', period: 'Feb 2024 — Present', type: 'work' as const, description: 'End-to-end ML pipeline for IT ticket intelligence (ServiceNow, semantic embeddings, HDBSCAN, Azure AI Foundry). Multi-tenant SaaS for automated telephone surveys (Azure Functions, LangChain, RAG, Azure Cognitive Search, multilingual support). Data lakehouse architectures (PySpark, Microsoft Fabric, Zucchetti ERP).' },
+      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', period: 'Feb 2024 — Present', type: 'work' as const, description: 'Led the Innovation Team driving AI, cloud, and data engineering initiatives from opportunity assessment and pre-sales through solution architecture, PoC delivery, and production rollout. Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and a multi-stage LLM orchestration layer (Azure AI Foundry) for automated text normalisation, topic labelling, and knowledge base generation. Designed and productised a multi-tenant SaaS platform that fully automates telephone survey workflows — serverless event-driven architecture (Azure Functions, Azure Communication Services), Azure Speech transcription, LangChain report generation, RAG conversational agent (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), and multi-tenant isolation via Azure Entra ID, deployed with Azure Pipelines CI/CD. Delivered data pipeline and lakehouse architectures across multiple client engagements: ERP integrations (Zucchetti REST API, OAuth2), Medallion architecture on PostgreSQL, and data processing workflows with PySpark and Microsoft Fabric.' },
       { role: '2nd Place @ Encode x Algorand Hackathon', company: 'Encode Club', period: 'Jul 2022', type: 'award' as const, description: 'A 4-week hackathon focused on Algorand Blockchain. With my team I won 2nd place by developing a decentralized crowdfunding platform.' },
     ],
   },
@@ -107,6 +106,9 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 }
 
 /* ── Work Project Modal ────────────────────────────────────────────── */
+const fmtDate = (d: string) =>
+  new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
 function WorkProjectModal({ project, backLabel, onClose }: { project: WorkProject; backLabel: string; onClose: () => void }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -161,7 +163,7 @@ function PostModal({ post, backLabel, onClose }: { post: Post; backLabel: string
     };
   }, [onClose]);
 
-  const fmt = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  const fmt = fmtDate;
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -229,7 +231,7 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 60);
-      const ids = ['hero', 'about', 'blog', 'experience', 'side', 'education', 'contact'];
+      const ids = ['hero', 'about', 'posts', 'experience', 'side', 'education', 'contact'];
       for (const id of [...ids].reverse()) {
         const el = document.getElementById(id);
         if (el && window.scrollY >= el.offsetTop - 120) {
@@ -249,6 +251,7 @@ export default function App() {
 
   const navLinks = [
     { id: 'about',      label: c.nav.about },
+    { id: 'posts',      label: c.nav.posts },
     { id: 'experience', label: c.nav.experience },
     { id: 'side',       label: c.nav.side },
     { id: 'education',  label: c.nav.education },
@@ -317,14 +320,12 @@ export default function App() {
             <p className="hero-subtitle">Computer Engineer</p>
 
             <div className="hero-cta">
-              <button className="btn-primary" onClick={() => scrollTo('about')}>{c.hero.cta1}</button>
-              <button className="btn-outline" onClick={() => scrollTo('projects')}>{c.hero.cta2}</button>
               <a className="btn-outline" href="/CV-Marco-Barca.pdf" download aria-label="Download CV">Download CV</a>
             </div>
           </div>
 
           {/* Right: Posts terminal */}
-          <div className="hero-posts" id="blog">
+          <div className="hero-posts">
             <p className="hero-posts-label">{c.blog.title}</p>
             <div className="terminal-window">
               <div className="terminal-titlebar">
@@ -375,6 +376,29 @@ export default function App() {
       </Section>
 
       {/* ── Experience + Work Projects ── */}
+      <Section id="posts" className="alt-bg">
+        <SectionTitle>{c.blog.title}</SectionTitle>
+        <div className="posts-grid">
+          {posts.map(post => (
+            <button
+              key={post.slug}
+              className="glass-card post-card"
+              onClick={() => setSelectedSlug(post.slug)}
+            >
+              <div className="post-card-header">
+                <time className="post-card-date">{fmtDate(post.date)}</time>
+                <span className="post-card-read-time">{post.readTime} {c.blog.minRead}</span>
+              </div>
+              <h3 className="post-card-title">{post.title}</h3>
+              <div className="post-tags" style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+                {post.tags.map(t => <span key={t} className="tag">{t}</span>)}
+              </div>
+              <span className="project-link post-card-link">{c.blog.readMore}</span>
+            </button>
+          ))}
+        </div>
+      </Section>
+
       <Section id="experience" className="alt-bg">
         <SectionTitle>{c.experience.title}</SectionTitle>
         <div className="exp-split">
