@@ -536,7 +536,7 @@
   .exp-split { grid-template-columns: 1fr; gap: 3rem; }
   .beam-svg { display: none; }
   .exp-split > div > div[style] { padding-top: 0 !important; }
-  .exp-split > div > div > div[style] { margin-top: 0 !important; }
+  .npo-proj-group { margin-top: 1.5rem !important; }
 }
 
 .exp-col-label--mobile-only { display: none; }

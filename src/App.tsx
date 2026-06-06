@@ -612,7 +612,7 @@ export default function App() {
                 );
               })}
               {/* NPO project group */}
-              <div ref={npoGroupRef} style={{ marginTop: projOffsets.npoMarginTop, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div ref={npoGroupRef} className="npo-proj-group" style={{ marginTop: projOffsets.npoMarginTop, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 {workProjects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, period, tags }) => {
                   const idx = workProjects.findIndex(p => p.slug === slug);
                   return (
