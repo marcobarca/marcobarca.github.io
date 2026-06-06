@@ -231,7 +231,7 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 60);
-      const ids = ['hero', 'about', 'posts', 'experience', 'side', 'education', 'contact'];
+      const ids = ['hero', 'about', 'experience', 'side', 'education', 'contact', 'posts'];
       for (const id of [...ids].reverse()) {
         const el = document.getElementById(id);
         if (el && window.scrollY >= el.offsetTop - 120) {
@@ -251,11 +251,11 @@ export default function App() {
 
   const navLinks = [
     { id: 'about',      label: c.nav.about },
-    { id: 'posts',      label: c.nav.posts },
     { id: 'experience', label: c.nav.experience },
     { id: 'side',       label: c.nav.side },
     { id: 'education',  label: c.nav.education },
     { id: 'contact',    label: c.nav.contact },
+    { id: 'posts',      label: c.nav.posts },
   ];
 
   const badgeLabel = (type: 'work' | 'edu' | 'award') =>
@@ -376,29 +376,6 @@ export default function App() {
       </Section>
 
       {/* ── Experience + Work Projects ── */}
-      <Section id="posts" className="alt-bg">
-        <SectionTitle>{c.blog.title}</SectionTitle>
-        <div className="posts-grid">
-          {posts.map(post => (
-            <button
-              key={post.slug}
-              className="glass-card post-card"
-              onClick={() => setSelectedSlug(post.slug)}
-            >
-              <div className="post-card-header">
-                <time className="post-card-date">{fmtDate(post.date)}</time>
-                <span className="post-card-read-time">{post.readTime} {c.blog.minRead}</span>
-              </div>
-              <h3 className="post-card-title">{post.title}</h3>
-              <div className="post-tags" style={{ marginTop: 'auto', paddingTop: '1rem' }}>
-                {post.tags.map(t => <span key={t} className="tag">{t}</span>)}
-              </div>
-              <span className="project-link post-card-link">{c.blog.readMore}</span>
-            </button>
-          ))}
-        </div>
-      </Section>
-
       <Section id="experience" className="alt-bg">
         <SectionTitle>{c.experience.title}</SectionTitle>
         <div className="exp-split">
@@ -578,6 +555,30 @@ export default function App() {
               <span className="contact-card-label">{label}</span>
               <span className="contact-card-value">{value}</span>
             </a>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── Posts ── */}
+      <Section id="posts" className="alt-bg">
+        <SectionTitle>{c.blog.title}</SectionTitle>
+        <div className="posts-grid">
+          {posts.map(post => (
+            <button
+              key={post.slug}
+              className="glass-card post-card"
+              onClick={() => setSelectedSlug(post.slug)}
+            >
+              <div className="post-card-header">
+                <time className="post-card-date">{fmtDate(post.date)}</time>
+                <span className="post-card-read-time">{post.readTime} {c.blog.minRead}</span>
+              </div>
+              <h3 className="post-card-title">{post.title}</h3>
+              <div className="post-tags" style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+                {post.tags.map(t => <span key={t} className="tag">{t}</span>)}
+              </div>
+              <span className="project-link post-card-link">{c.blog.readMore}</span>
+            </button>
           ))}
         </div>
       </Section>
