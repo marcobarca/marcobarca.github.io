@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import githubLogo from './assets/github.svg';
 import linkedinLogo from './assets/linkedin.svg';
 import { posts, type Post } from './posts';
-import { workProjects, type WorkProject } from './workProjects';
+import { workProjects } from './workProjects';
 import './projects/App.css';
 
 /* ── Color palette for timeline accents ──────────────────────────────── */
@@ -47,7 +47,7 @@ const CONTENT = {
     title: 'About me',
     p1: <p>I'm a <strong>Computer Engineer</strong> specialising in <strong>cloud architecture</strong>, <strong>generative AI</strong>, and solution design. I build complex systems, from multi-tenant SaaS platforms to AI pipelines for enterprise clients.</p>,
     p2: <p>I work at the intersection of cloud engineering, LLMs, and software architecture. I enjoy turning emerging technologies into tangible products: systems that scale, integrate, and deliver real business value.</p>,
-    p3: <p>I hold a Master's in Computer Engineering with a focus on <strong>Cybersecurity</strong> from Politecnico di Torino. I currently lead innovation initiatives and define the technical direction for AI and cloud projects.</p>,
+    p3: <p>I hold a Master's in Computer Engineering with a focus on <strong>Cybersecurity</strong> from Politecnico di Torino. I currently lead innovation initiatives and define the technical direction for AI and cloud projects. In 2022 I placed <strong>2nd at the Encode × Algorand Hackathon</strong>, building a decentralised crowdfunding platform on the Algorand blockchain.</p>,
     tags: ['Solution Architecture', 'Cloud & Azure', 'AI / LLM', 'Data Engineering'],
   },
   projects: {
@@ -70,7 +70,6 @@ const CONTENT = {
     items: [
       { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', period: 'Jan 2026 — Present', type: 'work' as const, accent: 'purple' as AccentKey, description: <ul><li>Designing end-to-end architecture of a B2C SaaS platform for live online language lessons: modular monolith (Spring Boot), DDD-light, Azure AD B2C, Stripe, Azure Blob Storage</li><li>Technical governance: bounded context design, API definition, RBAC security model, and incremental MVP delivery plan</li></ul> },
       { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', period: 'Feb 2024 — Present', type: 'work' as const, accent: 'green' as AccentKey, description: <ul><li>Led the Innovation Team driving AI, cloud, and data engineering initiatives from pre-sales and opportunity assessment through architecture, PoC delivery, and production rollout</li><li>Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and Azure AI Foundry LLM orchestration for automated topic labelling and knowledge base generation</li><li>Designed and productised a multi-tenant SaaS platform automating telephone survey workflows: Azure Functions, Azure Speech, LangChain, RAG (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), Entra ID isolation, Azure Pipelines CI/CD</li><li>Delivered data pipeline and lakehouse architectures: Medallion on PostgreSQL, PySpark & Microsoft Fabric, ERP integrations (Zucchetti REST API, OAuth2)</li></ul> },
-      { role: '2nd Place @ Encode x Algorand Hackathon', company: 'Encode Club', period: 'Jul 2022', type: 'award' as const, accent: 'amber' as AccentKey, description: <ul><li>4-week hackathon focused on Algorand Blockchain</li><li>Developed a decentralised crowdfunding platform with my team</li></ul> },
     ],
   },
   education: {
@@ -78,8 +77,8 @@ const CONTENT = {
     degreesLabel: 'Degrees & Credentials',
     certsLabel: 'Certifications',
     degrees: [
-      { title: "Master's Degree — Computer Engineering, Cybersecurity", institution: 'Politecnico di Torino', period: 'Jan 2020 — Dec 2023', description: 'Master Thesis: "Modelling and Analysis of Attacker Behaviour through Graph Construction".' },
-      { title: "Bachelor's Degree — Computer Engineering", institution: 'Università degli Studi di Salerno', period: '2017 — 2020', description: "Bachelor's Thesis: \"Caratterizzazione sperimentale di un sistema per il riconoscimento di etnia in presenza di occlusioni\"." },
+      { title: "MSc — Computer Engineering, Cybersecurity", institution: 'Politecnico di Torino', period: 'Jan 2020 — Dec 2023', description: 'Thesis: "Modelling and Analysis of Attacker Behaviour through Graph Construction".' },
+      { title: "BSc — Computer Engineering", institution: 'Università degli Studi di Salerno', period: '2017 — 2020', description: 'Thesis: "Experimental Characterisation of an Ethnicity Recognition System under Partial Occlusion".' },
       { title: 'Master in Blockchain & Digital Assets', institution: 'MasterZ.', period: 'Jan 2022 — Jul 2022', description: 'Scholarship focused on distributed ledger technologies, smart contracts, and digital assets.' },
     ],
     certifications: [] as { name: string; issuer: string; date: string; link?: string }[],
@@ -142,15 +141,21 @@ function AnimatedBeam({
   fromRef,
   toRef,
   delay = 0,
+  duration = 2.5,
   beamId,
   accentColor = 'cyan',
+  suppressGlow = false,
+  recalcDep,
 }: {
   containerRef: React.RefObject<HTMLDivElement>;
   fromRef: React.RefObject<HTMLElement>;
   toRef: React.RefObject<HTMLElement>;
   delay?: number;
+  duration?: number;
   beamId: string;
   accentColor?: AccentKey;
+  suppressGlow?: boolean;
+  recalcDep?: unknown;
 }) {
   const [pathD, setPathD] = useState('');
   const [totalLen, setTotalLen] = useState(0);
@@ -177,7 +182,7 @@ function AnimatedBeam({
     calc();
     window.addEventListener('resize', calc);
     return () => window.removeEventListener('resize', calc);
-  }, [containerRef, fromRef, toRef]);
+  }, [containerRef, fromRef, toRef, recalcDep]);
 
   useLayoutEffect(() => {
     if (measureRef.current && pathD) {
@@ -189,15 +194,15 @@ function AnimatedBeam({
 
   const { beam, trace, shadow } = ACCENT[accentColor];
   const BEAM = 70;
-  const DUR = 2.5;
+  const DUR = duration;
   const kf = `bm${beamId}`;
   const rgKf = `rg${beamId}`;
 
   // Fraction of the cycle when the beam front reaches the card
+  // Beam front arrives at card at arrFrac; tail leaves at 100% (end of cycle)
   const arrFrac = totalLen > 0 ? totalLen / (BEAM + totalLen) : 0;
   const a0 = (arrFrac * 100).toFixed(2);
   const a1 = Math.min(100, arrFrac * 100 + 2).toFixed(2);
-  const a2 = Math.min(100, arrFrac * 100 + 10).toFixed(2);
 
   return (
     <svg
@@ -222,7 +227,7 @@ function AnimatedBeam({
               animationDelay: `${delay}s`,
             }}
           />
-          {cardRect && (
+          {cardRect && !suppressGlow && (
             <rect
               x={cardRect.x} y={cardRect.y}
               width={cardRect.w} height={cardRect.h}
@@ -239,7 +244,7 @@ function AnimatedBeam({
           )}
           <style>{`
             @keyframes ${kf}{from{stroke-dashoffset:${BEAM}}to{stroke-dashoffset:${-totalLen}}}
-            @keyframes ${rgKf}{0%,${a0}%{opacity:0}${a1}%{opacity:1}${a2}%,100%{opacity:0}}
+            @keyframes ${rgKf}{0%,${a0}%{opacity:0}${a1}%,97%{opacity:1}100%{opacity:0}}
           `}</style>
         </>
       )}
@@ -250,15 +255,13 @@ function AnimatedBeam({
 const fmtDate = (d: string) =>
   new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
-function WorkProjectModal({ project, backLabel, onClose }: { project: WorkProject; backLabel: string; onClose: () => void }) {
+/* ── Work Project Modal ────────────────────────────────────────────── */
+function WorkProjectModal({ project, backLabel, onClose }: { project: import('./workProjects').WorkProject; backLabel: string; onClose: () => void }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = '';
-      window.removeEventListener('keydown', onKey);
-    };
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
   }, [onClose]);
 
   return (
@@ -276,10 +279,8 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: WorkProjec
             <span className="t-prompt">$ </span>cat {project.slug}.md
           </p>
           <div className="modal-meta">
-            <span className="timeline-period" style={{ fontFamily: 'var(--mono, monospace)' }}>{project.period}</span>
-            <div className="post-tags">
-              {project.tags.map(t => <span key={t} className="tag">{t}</span>)}
-            </div>
+            <span className="post-date" style={{ fontFamily: 'var(--mono, monospace)' }}>{project.period}</span>
+            <div className="post-tags">{project.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
           </div>
           <h1 className="modal-title">{project.title}</h1>
           {project.company && <p className="timeline-company" style={{ marginBottom: '1.5rem' }}>{project.company}</p>}
@@ -348,12 +349,41 @@ export default function App() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const selectedPost = selectedSlug ? posts.find(p => p.slug === selectedSlug) ?? null : null;
 
+  const [hoveredProj, setHoveredProj] = useState<number | null>(null);
   const [selectedWorkSlug, setSelectedWorkSlug] = useState<string | null>(null);
   const selectedWorkProject = selectedWorkSlug ? workProjects.find(p => p.slug === selectedWorkSlug) ?? null : null;
+  const [projOffsets, setProjOffsets] = useState({ paddingTop: 0, npoMarginTop: 0 });
+
+  useEffect(() => {
+    const calc = () => {
+      const c   = expContainerRef.current;
+      const v3  = v3CardRef.current;
+      const npo = npoCardRef.current;
+      const p0  = proj0Ref.current;
+      const grp = npoGroupRef.current;
+      if (!c || !v3 || !npo || !p0 || !grp) return;
+      const cR  = c.getBoundingClientRect();
+      const v3CenterY  = v3.getBoundingClientRect().top  + v3.getBoundingClientRect().height  / 2 - cR.top;
+      const npoCenterY = npo.getBoundingClientRect().top + npo.getBoundingClientRect().height / 2 - cR.top;
+      const h0   = p0.getBoundingClientRect().height;
+      const hNpo = grp.getBoundingClientRect().height;
+      const p0Top = p0.getBoundingClientRect().top - cR.top;
+      setProjOffsets(prev => {
+        const p0Natural = p0Top - prev.paddingTop;
+        const paddingTop    = Math.max(0, v3CenterY  - p0Natural - h0   / 2);
+        const npoMarginTop  = Math.max(0, npoCenterY - v3CenterY - h0   / 2 - hNpo / 2);
+        return { paddingTop, npoMarginTop };
+      });
+    };
+    calc();
+    window.addEventListener('resize', calc);
+    return () => window.removeEventListener('resize', calc);
+  }, []);
 
   const expContainerRef = useRef<HTMLDivElement>(null);
   const v3CardRef  = useRef<HTMLDivElement>(null);
   const npoCardRef = useRef<HTMLDivElement>(null);
+  const npoGroupRef = useRef<HTMLDivElement>(null);
   const proj0Ref = useRef<HTMLButtonElement>(null);
   const proj1Ref = useRef<HTMLButtonElement>(null);
   const proj2Ref = useRef<HTMLButtonElement>(null);
@@ -551,46 +581,49 @@ export default function App() {
           </div>
 
           {/* Beams: V3 card → V3 project (blue) */}
-          <AnimatedBeam containerRef={expContainerRef} fromRef={v3CardRef  as React.RefObject<HTMLElement>} toRef={proj0Ref as React.RefObject<HTMLElement>} delay={0}    beamId="v0" accentColor="purple" />
-          {/* Beams: NPO card → 3 NPO projects (cyan) */}
-          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj1Ref as React.RefObject<HTMLElement>} delay={0}    beamId="n1" accentColor="green" />
-          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj2Ref as React.RefObject<HTMLElement>} delay={0.83} beamId="n2" accentColor="green" />
-          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj3Ref as React.RefObject<HTMLElement>} delay={1.66} beamId="n3" accentColor="green" />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={v3CardRef  as React.RefObject<HTMLElement>} toRef={proj0Ref as React.RefObject<HTMLElement>} delay={0}    beamId="v0" accentColor="purple" suppressGlow={hoveredProj === 0} />
+          {/* Beams: NPO card → 3 NPO projects */}
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj1Ref as React.RefObject<HTMLElement>} delay={0}    beamId="n1" accentColor="green" suppressGlow={hoveredProj === 1} />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj2Ref as React.RefObject<HTMLElement>} delay={0.83} duration={3.5} beamId="n2" accentColor="green" suppressGlow={hoveredProj === 2} />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj3Ref as React.RefObject<HTMLElement>} delay={1.66} duration={4.5} beamId="n3" accentColor="green" suppressGlow={hoveredProj === 3} />
 
           {/* Right: work projects */}
           <div>
-            <p className="exp-col-label">{c.experience.workProjectsLabel}</p>
-            <div className="projects-list">
-              {workProjects.map(({ slug, title, company, period, tags, body }, idx) => {
-                const projAccent = company === 'V3 Advisory' ? ACCENT.purple : ACCENT.green;
+            <div style={{ paddingTop: projOffsets.paddingTop }}>
+              {/* V3 project group */}
+              {workProjects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, period, tags }) => {
+                const idx = workProjects.findIndex(p => p.slug === slug);
                 return (
-                  <button
-                    key={slug}
-                    ref={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx]}
+                  <button key={slug} ref={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.RefObject<HTMLButtonElement>}
                     className="glass-card timeline-card timeline-card--project timeline-card--clickable"
                     onClick={() => setSelectedWorkSlug(slug)}
-                    style={{
-                      '--card-bg':     projAccent.cardBg,
-                      '--card-border': projAccent.cardBorder,
-                      '--card-hover':  projAccent.cardHover,
-                      '--card-shadow': projAccent.cardShadow,
-                      '--period-color':projAccent.period,
-                      '--role-color':  projAccent.role,
-                    } as React.CSSProperties}
-                  >
-                    <div className="timeline-header">
-                      <span className="timeline-period">{period}</span>
-                      <span className="timeline-badge work">{c.experience.badgeWork}</span>
-                    </div>
+                    onMouseEnter={() => setHoveredProj(idx)} onMouseLeave={() => setHoveredProj(null)}
+                    style={{ '--card-bg': ACCENT.purple.cardBg, '--card-border': ACCENT.purple.cardBorder, '--card-hover': ACCENT.purple.cardHover, '--card-shadow': ACCENT.purple.cardShadow, '--period-color': ACCENT.purple.period, '--role-color': ACCENT.purple.role } as React.CSSProperties}>
+                    <div className="timeline-header"><span className="timeline-period">{period}</span><span className="timeline-badge work">{c.experience.badgeWork}</span></div>
                     <h3 className="timeline-role">{title}</h3>
                     <p className="timeline-company">{company}</p>
-                    <div className="timeline-desc"><ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown></div>
-                    <div className="project-tags" style={{ marginTop: '0.5rem' }}>
-                      {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
-                    </div>
+                    <div className="project-tags" style={{ marginTop: '0.6rem' }}>{tags.map(tag => <span key={tag} className="tag">{tag}</span>)}</div>
                   </button>
                 );
               })}
+              {/* NPO project group */}
+              <div ref={npoGroupRef} style={{ marginTop: projOffsets.npoMarginTop, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                {workProjects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, period, tags }) => {
+                  const idx = workProjects.findIndex(p => p.slug === slug);
+                  return (
+                    <button key={slug} ref={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.RefObject<HTMLButtonElement>}
+                      className="glass-card timeline-card timeline-card--project timeline-card--clickable"
+                      onClick={() => setSelectedWorkSlug(slug)}
+                      onMouseEnter={() => setHoveredProj(idx)} onMouseLeave={() => setHoveredProj(null)}
+                      style={{ '--card-bg': ACCENT.green.cardBg, '--card-border': ACCENT.green.cardBorder, '--card-hover': ACCENT.green.cardHover, '--card-shadow': ACCENT.green.cardShadow, '--period-color': ACCENT.green.period, '--role-color': ACCENT.green.role } as React.CSSProperties}>
+                      <div className="timeline-header"><span className="timeline-period">{period}</span><span className="timeline-badge work">{c.experience.badgeWork}</span></div>
+                      <h3 className="timeline-role">{title}</h3>
+                      <p className="timeline-company">{company}</p>
+                      <div className="project-tags" style={{ marginTop: '0.6rem' }}>{tags.map(tag => <span key={tag} className="tag">{tag}</span>)}</div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -690,19 +723,10 @@ export default function App() {
       </Section>
 
       {selectedPost && (
-        <PostModal
-          post={selectedPost}
-          backLabel={c.blog.back}
-          onClose={() => setSelectedSlug(null)}
-        />
+        <PostModal post={selectedPost} backLabel={c.blog.back} onClose={() => setSelectedSlug(null)} />
       )}
-
       {selectedWorkProject && (
-        <WorkProjectModal
-          project={selectedWorkProject}
-          backLabel={c.blog.back}
-          onClose={() => setSelectedWorkSlug(null)}
-        />
+        <WorkProjectModal project={selectedWorkProject} backLabel={c.blog.back} onClose={() => setSelectedWorkSlug(null)} />
       )}
 
       {/* ── Posts ── */}
@@ -717,12 +741,12 @@ export default function App() {
             >
               <div className="post-card-header">
                 <time className="post-card-date">{fmtDate(post.date)}</time>
-                <span className="post-card-read-time">{post.readTime} {c.blog.minRead}</span>
+                <div className="post-card-tags">
+                  {post.tags.slice(0, 3).map(t => <span key={t} className="tag">{t}</span>)}
+                  {post.tags.length > 3 && <span className="tag tag--more">...]</span>}
+                </div>
               </div>
               <h3 className="post-card-title">{post.title}</h3>
-              <div className="post-tags" style={{ marginTop: 'auto', paddingTop: '1rem' }}>
-                {post.tags.map(t => <span key={t} className="tag">{t}</span>)}
-              </div>
               <span className="project-link post-card-link">{c.blog.readMore}</span>
             </button>
           ))}
