@@ -593,6 +593,7 @@ export default function App() {
 
           {/* Right: work projects */}
           <div>
+            <p className="exp-col-label exp-col-label--mobile-only">{c.experience.workProjectsLabel}</p>
             <div style={{ paddingTop: projOffsets.paddingTop }}>
               {/* V3 project group */}
               {workProjects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, period, tags }) => {

@@ -535,6 +535,13 @@
 @media (max-width: 860px) {
   .exp-split { grid-template-columns: 1fr; gap: 3rem; }
   .beam-svg { display: none; }
+  .exp-split > div > div[style] { padding-top: 0 !important; }
+  .exp-split > div > div > div[style] { margin-top: 0 !important; }
+}
+
+.exp-col-label--mobile-only { display: none; }
+@media (max-width: 860px) {
+  .exp-col-label--mobile-only { display: block; }
 }
 
 .exp-col-label {
