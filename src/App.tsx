@@ -735,7 +735,7 @@ export default function App() {
       )}
 
       {/* ── Contact ── */}
-      <Section id="contact" className="alt-bg">
+      <Section id="contact">
         <SectionTitle>{c.contact.title}</SectionTitle>
         <p className="contact-subtitle">{c.contact.subtitle}</p>
         <div className="contact-grid">
