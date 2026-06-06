@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import githubLogo from './assets/github.svg';
@@ -7,6 +7,37 @@ import { posts, type Post } from './posts';
 import { workProjects, type WorkProject } from './workProjects';
 import './projects/App.css';
 
+/* ── Color palette for timeline accents ──────────────────────────────── */
+const ACCENT = {
+  purple: {
+    beam: 'rgba(139,92,246,0.85)',  trace: 'rgba(139,92,246,0.12)',  shadow: 'rgba(139,92,246,0.6)',
+    dot: '#8b5cf6', glow: 'rgba(139,92,246,0.5)',
+    cardBg: 'rgba(139,92,246,0.05)', cardBorder: 'rgba(139,92,246,0.15)',
+    cardHover: 'rgba(139,92,246,0.45)', cardShadow: 'rgba(139,92,246,0.1)',
+    period: 'rgba(139,92,246,0.6)', role: '#c4b5fd',
+  },
+  cyan: {
+    beam: 'rgba(6,182,212,0.85)',   trace: 'rgba(6,182,212,0.12)',   shadow: 'rgba(6,182,212,0.6)',
+    dot: '#06b6d4', glow: 'rgba(6,182,212,0.5)',
+    cardBg: 'rgba(6,182,212,0.05)', cardBorder: 'rgba(6,182,212,0.15)',
+    cardHover: 'rgba(6,182,212,0.45)', cardShadow: 'rgba(6,182,212,0.1)',
+    period: 'rgba(6,182,212,0.6)', role: '#a5f3fc',
+  },
+  green: {
+    beam: 'rgba(16,185,129,0.85)',  trace: 'rgba(16,185,129,0.12)',  shadow: 'rgba(16,185,129,0.6)',
+    dot: '#10b981', glow: 'rgba(16,185,129,0.5)',
+    cardBg: 'rgba(16,185,129,0.05)', cardBorder: 'rgba(16,185,129,0.15)',
+    cardHover: 'rgba(16,185,129,0.45)', cardShadow: 'rgba(16,185,129,0.1)',
+    period: 'rgba(16,185,129,0.6)', role: '#6ee7b7',
+  },
+  amber: {
+    beam: 'rgba(245,158,11,0.85)',  trace: 'rgba(245,158,11,0.12)',  shadow: 'rgba(245,158,11,0.6)',
+    dot: '#f59e0b', glow: 'rgba(245,158,11,0.5)',
+    cardBg: '', cardBorder: '', cardHover: '', cardShadow: '', period: '', role: '',
+  },
+} as const;
+type AccentKey = keyof typeof ACCENT;
+
 /* ── Content ─────────────────────────────────────────────────────────── */
 const CONTENT = {
   nav: { about: 'About', posts: 'Posts', experience: 'Experience', side: 'Side Projects', education: 'Education', contact: 'Contact' },
@@ -14,7 +45,7 @@ const CONTENT = {
   hero: { cta1: 'Learn more', cta2: 'My projects' },
   about: {
     title: 'About me',
-    p1: <p>I'm a <strong>Computer Engineer</strong> specialising in <strong>cloud architecture</strong>, <strong>generative AI</strong>, and solution design. I build complex systems — from multi-tenant SaaS platforms to AI pipelines for enterprise clients.</p>,
+    p1: <p>I'm a <strong>Computer Engineer</strong> specialising in <strong>cloud architecture</strong>, <strong>generative AI</strong>, and solution design. I build complex systems, from multi-tenant SaaS platforms to AI pipelines for enterprise clients.</p>,
     p2: <p>I work at the intersection of cloud engineering, LLMs, and software architecture. I enjoy turning emerging technologies into tangible products: systems that scale, integrate, and deliver real business value.</p>,
     p3: <p>I hold a Master's in Computer Engineering with a focus on <strong>Cybersecurity</strong> from Politecnico di Torino. I currently lead innovation initiatives and define the technical direction for AI and cloud projects.</p>,
     tags: ['Solution Architecture', 'Cloud & Azure', 'AI / LLM', 'Data Engineering'],
@@ -25,7 +56,7 @@ const CONTENT = {
       { title: 'cleanux', description: 'AI-driven Linux server monitor and cleanup tool. Analyses system state and intelligently suggests optimisation actions.', tags: ['Shell', 'AI', 'Linux'], link: 'https://github.com/marcobarca/cleanux' },
       { title: 'AttackModeler', description: "Framework to model and analyse attacker behaviour using GPT. Extracts patterns from CTF reports to build a structured representation of attacks. Built for my Master's thesis.", tags: ['Python', 'AI', 'Cybersecurity'], link: 'https://github.com/marcobarca/AttackModeler' },
       { title: 'microhttp', description: 'Minimalist HTTP server written in pure C with no external dependencies. Educational project to understand how web servers work at a low level.', tags: ['C', 'Systems', 'Networking'], link: 'https://github.com/marcobarca/microhttp' },
-      { title: 'Algorand Crowdfunding', description: 'Decentralised crowdfunding platform on Algorand Blockchain. Built during the Encode x Algorand Hackathon — 2nd place winner.', tags: ['JavaScript', 'Blockchain', 'Algorand'], link: 'https://github.com/marcobarca/Algorand_Crowdfunding_platform' },
+      { title: 'Algorand Crowdfunding', description: 'Decentralised crowdfunding platform on Algorand Blockchain. Built during the Encode x Algorand Hackathon (2nd place winner).', tags: ['JavaScript', 'Blockchain', 'Algorand'], link: 'https://github.com/marcobarca/Algorand_Crowdfunding_platform' },
       { title: 'Public Transport System', description: 'Web-based information system for managing ticketing and automatic vehicle access control for a public transport company.', tags: ['Kotlin', 'Web', 'Backend'], link: 'https://github.com/marcobarca/Public-transport-company-web-based-information-system' },
       { title: 'EZShop', description: 'Application for integrated management of sales, inventory, supply orders, and customer accounting.', tags: ['Java'], link: 'https://github.com/marcobarca/EZShop' },
       { title: 'LandTiger ARM Game', description: 'Game developed in C on an LPC1768 LandTiger ARM board. Embedded systems project with direct hardware management.', tags: ['C', 'Embedded', 'ARM'], link: 'https://github.com/marcobarca/LandTiger-ARM-board-game' },
@@ -37,9 +68,9 @@ const CONTENT = {
     careerLabel: 'Career', workProjectsLabel: 'Projects',
     badgeWork: 'Work', badgeEdu: 'Education', badgeAward: '🏆 Award',
     items: [
-      { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', period: 'Jan 2026 — Present', type: 'work' as const, description: <ul><li>Designing end-to-end architecture of a B2C SaaS platform for live online language lessons — modular monolith (Spring Boot), DDD-light, Azure AD B2C, Stripe, Azure Blob Storage</li><li>Technical governance: bounded context design, API definition, RBAC security model, and incremental MVP delivery plan</li></ul> },
-      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', period: 'Feb 2024 — Present', type: 'work' as const, description: <ul><li>Led the Innovation Team driving AI, cloud, and data engineering initiatives from pre-sales and opportunity assessment through architecture, PoC delivery, and production rollout</li><li>Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and Azure AI Foundry LLM orchestration for automated topic labelling and knowledge base generation</li><li>Designed and productised a multi-tenant SaaS platform automating telephone survey workflows: Azure Functions, Azure Speech, LangChain, RAG (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), Entra ID isolation, Azure Pipelines CI/CD</li><li>Delivered data pipeline and lakehouse architectures: Medallion on PostgreSQL, PySpark & Microsoft Fabric, ERP integrations (Zucchetti REST API, OAuth2)</li></ul> },
-      { role: '2nd Place @ Encode x Algorand Hackathon', company: 'Encode Club', period: 'Jul 2022', type: 'award' as const, description: <ul><li>4-week hackathon focused on Algorand Blockchain</li><li>Developed a decentralised crowdfunding platform with my team</li></ul> },
+      { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', period: 'Jan 2026 — Present', type: 'work' as const, accent: 'purple' as AccentKey, description: <ul><li>Designing end-to-end architecture of a B2C SaaS platform for live online language lessons: modular monolith (Spring Boot), DDD-light, Azure AD B2C, Stripe, Azure Blob Storage</li><li>Technical governance: bounded context design, API definition, RBAC security model, and incremental MVP delivery plan</li></ul> },
+      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', period: 'Feb 2024 — Present', type: 'work' as const, accent: 'green' as AccentKey, description: <ul><li>Led the Innovation Team driving AI, cloud, and data engineering initiatives from pre-sales and opportunity assessment through architecture, PoC delivery, and production rollout</li><li>Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and Azure AI Foundry LLM orchestration for automated topic labelling and knowledge base generation</li><li>Designed and productised a multi-tenant SaaS platform automating telephone survey workflows: Azure Functions, Azure Speech, LangChain, RAG (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), Entra ID isolation, Azure Pipelines CI/CD</li><li>Delivered data pipeline and lakehouse architectures: Medallion on PostgreSQL, PySpark & Microsoft Fabric, ERP integrations (Zucchetti REST API, OAuth2)</li></ul> },
+      { role: '2nd Place @ Encode x Algorand Hackathon', company: 'Encode Club', period: 'Jul 2022', type: 'award' as const, accent: 'amber' as AccentKey, description: <ul><li>4-week hackathon focused on Algorand Blockchain</li><li>Developed a decentralised crowdfunding platform with my team</li></ul> },
     ],
   },
   education: {
@@ -106,6 +137,116 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 }
 
 /* ── Work Project Modal ────────────────────────────────────────────── */
+function AnimatedBeam({
+  containerRef,
+  fromRef,
+  toRef,
+  delay = 0,
+  beamId,
+  accentColor = 'cyan',
+}: {
+  containerRef: React.RefObject<HTMLDivElement>;
+  fromRef: React.RefObject<HTMLElement>;
+  toRef: React.RefObject<HTMLElement>;
+  delay?: number;
+  beamId: string;
+  accentColor?: AccentKey;
+}) {
+  const [pathD, setPathD] = useState('');
+  const [totalLen, setTotalLen] = useState(0);
+  const [cardRect, setCardRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const measureRef = useRef<SVGPathElement>(null);
+
+  useEffect(() => {
+    const calc = () => {
+      const c = containerRef.current;
+      const f = fromRef.current;
+      const t = toRef.current;
+      if (!c || !f || !t) return;
+      const cR = c.getBoundingClientRect();
+      const fR = f.getBoundingClientRect();
+      const tR = t.getBoundingClientRect();
+      const x1 = fR.right - cR.left;
+      const y1 = fR.top + fR.height * 0.5 - cR.top;
+      const x2 = tR.left - cR.left;
+      const y2 = tR.top + tR.height * 0.5 - cR.top;
+      const cx = (x1 + x2) / 2;
+      setPathD(`M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`);
+      setCardRect({ x: tR.left - cR.left, y: tR.top - cR.top, w: tR.width, h: tR.height });
+    };
+    calc();
+    window.addEventListener('resize', calc);
+    return () => window.removeEventListener('resize', calc);
+  }, [containerRef, fromRef, toRef]);
+
+  useLayoutEffect(() => {
+    if (measureRef.current && pathD) {
+      setTotalLen(measureRef.current.getTotalLength());
+    }
+  }, [pathD]);
+
+  if (!pathD) return null;
+
+  const { beam, trace, shadow } = ACCENT[accentColor];
+  const BEAM = 70;
+  const DUR = 2.5;
+  const kf = `bm${beamId}`;
+  const rgKf = `rg${beamId}`;
+
+  // Fraction of the cycle when the beam front reaches the card
+  const arrFrac = totalLen > 0 ? totalLen / (BEAM + totalLen) : 0;
+  const a0 = (arrFrac * 100).toFixed(2);
+  const a1 = Math.min(100, arrFrac * 100 + 2).toFixed(2);
+  const a2 = Math.min(100, arrFrac * 100 + 10).toFixed(2);
+
+  return (
+    <svg
+      aria-hidden
+      className="beam-svg"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none', zIndex: 1 }}
+    >
+      <path ref={measureRef} d={pathD} fill="none" stroke="none" visibility="hidden" />
+      <path d={pathD} stroke={trace} strokeWidth="1.5" fill="none" />
+      {totalLen > 0 && (
+        <>
+          <path
+            d={pathD}
+            stroke={beam}
+            strokeWidth="2.5"
+            fill="none"
+            strokeLinecap="round"
+            strokeDasharray={`${BEAM} ${totalLen}`}
+            style={{
+              filter: `drop-shadow(0 0 5px ${shadow}) drop-shadow(0 0 10px ${shadow})`,
+              animation: `${kf} ${DUR}s linear infinite`,
+              animationDelay: `${delay}s`,
+            }}
+          />
+          {cardRect && (
+            <rect
+              x={cardRect.x} y={cardRect.y}
+              width={cardRect.w} height={cardRect.h}
+              rx="14" ry="14"
+              fill="none"
+              stroke={beam}
+              strokeWidth="1.5"
+              style={{
+                filter: `drop-shadow(0 0 6px ${shadow}) drop-shadow(0 0 14px ${shadow})`,
+                animation: `${rgKf} ${DUR}s linear infinite`,
+                animationDelay: `${delay}s`,
+              }}
+            />
+          )}
+          <style>{`
+            @keyframes ${kf}{from{stroke-dashoffset:${BEAM}}to{stroke-dashoffset:${-totalLen}}}
+            @keyframes ${rgKf}{0%,${a0}%{opacity:0}${a1}%{opacity:1}${a2}%,100%{opacity:0}}
+          `}</style>
+        </>
+      )}
+    </svg>
+  );
+}
+
 const fmtDate = (d: string) =>
   new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -209,6 +350,14 @@ export default function App() {
 
   const [selectedWorkSlug, setSelectedWorkSlug] = useState<string | null>(null);
   const selectedWorkProject = selectedWorkSlug ? workProjects.find(p => p.slug === selectedWorkSlug) ?? null : null;
+
+  const expContainerRef = useRef<HTMLDivElement>(null);
+  const v3CardRef  = useRef<HTMLDivElement>(null);
+  const npoCardRef = useRef<HTMLDivElement>(null);
+  const proj0Ref = useRef<HTMLButtonElement>(null);
+  const proj1Ref = useRef<HTMLButtonElement>(null);
+  const proj2Ref = useRef<HTMLButtonElement>(null);
+  const proj3Ref = useRef<HTMLButtonElement>(null);
 
   const [visibleCount, setVisibleCount] = useState(() => window.innerWidth <= 700 ? 1 : 3);
   const [carouselIdx, setCarouselIdx] = useState(0);
@@ -378,16 +527,16 @@ export default function App() {
       {/* ── Experience + Work Projects ── */}
       <Section id="experience" className="alt-bg">
         <SectionTitle>{c.experience.title}</SectionTitle>
-        <div className="exp-split">
+        <div ref={expContainerRef} className="exp-split" style={{ position: 'relative' }}>
 
           {/* Left: career timeline */}
           <div>
             <p className="exp-col-label">{c.experience.careerLabel}</p>
             <div className="timeline">
-              {c.experience.items.map(({ role, company, period, description, type }, i) => (
-                <div key={i} className="timeline-item">
+              {c.experience.items.map(({ role, company, period, description, type, accent }, i) => (
+                <div key={i} className="timeline-item" style={{ '--dot-color': ACCENT[accent].dot, '--dot-glow': ACCENT[accent].glow } as React.CSSProperties}>
                   <div className="timeline-dot" />
-                  <div className="glass-card timeline-card">
+                  <div ref={i === 0 ? v3CardRef : i === 1 ? npoCardRef : undefined} className="glass-card timeline-card">
                     <div className="timeline-header">
                       <span className="timeline-period">{period}</span>
                       <span className={`timeline-badge ${type}`}>{badgeLabel(type)}</span>
@@ -401,16 +550,33 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right: work projects timeline */}
+          {/* Beams: V3 card → V3 project (blue) */}
+          <AnimatedBeam containerRef={expContainerRef} fromRef={v3CardRef  as React.RefObject<HTMLElement>} toRef={proj0Ref as React.RefObject<HTMLElement>} delay={0}    beamId="v0" accentColor="purple" />
+          {/* Beams: NPO card → 3 NPO projects (cyan) */}
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj1Ref as React.RefObject<HTMLElement>} delay={0}    beamId="n1" accentColor="green" />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj2Ref as React.RefObject<HTMLElement>} delay={0.83} beamId="n2" accentColor="green" />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj3Ref as React.RefObject<HTMLElement>} delay={1.66} beamId="n3" accentColor="green" />
+
+          {/* Right: work projects */}
           <div>
             <p className="exp-col-label">{c.experience.workProjectsLabel}</p>
-            <div className="timeline timeline--project">
-              {workProjects.map(({ slug, title, company, period, tags, body }) => (
-                <div key={slug} className="timeline-item">
-                  <div className="timeline-dot timeline-dot--project" />
+            <div className="projects-list">
+              {workProjects.map(({ slug, title, company, period, tags, body }, idx) => {
+                const projAccent = company === 'V3 Advisory' ? ACCENT.purple : ACCENT.green;
+                return (
                   <button
+                    key={slug}
+                    ref={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx]}
                     className="glass-card timeline-card timeline-card--project timeline-card--clickable"
                     onClick={() => setSelectedWorkSlug(slug)}
+                    style={{
+                      '--card-bg':     projAccent.cardBg,
+                      '--card-border': projAccent.cardBorder,
+                      '--card-hover':  projAccent.cardHover,
+                      '--card-shadow': projAccent.cardShadow,
+                      '--period-color':projAccent.period,
+                      '--role-color':  projAccent.role,
+                    } as React.CSSProperties}
                   >
                     <div className="timeline-header">
                       <span className="timeline-period">{period}</span>
@@ -418,13 +584,13 @@ export default function App() {
                     </div>
                     <h3 className="timeline-role">{title}</h3>
                     <p className="timeline-company">{company}</p>
-                    <p className="timeline-desc">{body}</p>
+                    <div className="timeline-desc"><ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown></div>
                     <div className="project-tags" style={{ marginTop: '0.5rem' }}>
                       {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
                     </div>
                   </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

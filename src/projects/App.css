@@ -533,6 +533,7 @@
 
 @media (max-width: 860px) {
   .exp-split { grid-template-columns: 1fr; gap: 3rem; }
+  .beam-svg { display: none; }
 }
 
 .exp-col-label {
@@ -545,32 +546,34 @@
   margin-bottom: 1.25rem;
 }
 
-/* Project timeline: cyan accent */
-.timeline--project::before {
-  background: linear-gradient(to bottom, var(--cyan), var(--blue), transparent);
+/* Projects list (no timeline) */
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .timeline-dot--project {
-  background: var(--cyan);
-  box-shadow: 0 0 10px rgba(6,182,212,0.5);
+  background: var(--dot-color, var(--cyan));
+  box-shadow: 0 0 10px var(--dot-glow, rgba(6,182,212,0.5));
 }
 
 .timeline-card--project {
-  background: rgba(6,182,212,0.05);
-  border-color: rgba(6,182,212,0.15);
+  background: var(--card-bg, rgba(6,182,212,0.05));
+  border-color: var(--card-border, rgba(6,182,212,0.15));
 }
 
 .timeline-card--project:hover {
-  border-color: rgba(6,182,212,0.35);
-  box-shadow: 0 12px 40px rgba(6,182,212,0.08);
+  border-color: var(--card-hover, rgba(6,182,212,0.45));
+  box-shadow: 0 12px 40px var(--card-shadow, rgba(6,182,212,0.1));
 }
 
 .timeline-card--project .timeline-period {
-  color: rgba(6,182,212,0.6);
+  color: var(--period-color, rgba(6,182,212,0.6));
 }
 
 .timeline-card--project .timeline-role {
-  color: #a5f3fc;
+  color: var(--role-color, #a5f3fc);
 }
 
 .timeline-card--clickable {
@@ -870,7 +873,7 @@
   top: 8px;
   bottom: 8px;
   width: 2px;
-  background: linear-gradient(to bottom, var(--purple), var(--blue), transparent);
+  background: linear-gradient(to bottom, var(--purple), #10b981, transparent);
   border-radius: 2px;
 }
 
@@ -888,9 +891,9 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--purple);
+  background: var(--dot-color, var(--purple));
   border: 2px solid var(--bg-alt);
-  box-shadow: 0 0 10px rgba(139,92,246,0.5);
+  box-shadow: 0 0 10px var(--dot-glow, rgba(139,92,246,0.5));
 }
 
 .timeline-card {
@@ -959,6 +962,7 @@
   font-size: 0.9rem;
   color: var(--text-muted);
   line-height: 1.65;
+  text-align: justify;
 }
 
 .timeline-desc ul {
@@ -972,10 +976,11 @@
 .timeline-desc ul li {
   position: relative;
   padding-left: 0.1rem;
+  text-align: justify;
 }
 
 .timeline-desc ul li::before {
-  content: '—';
+  content: '•';
   position: absolute;
   left: -1.1rem;
   color: var(--purple);
@@ -1183,6 +1188,7 @@
   color: var(--text-muted);
   font-size: 1rem;
   line-height: 1.8;
+  text-align: justify;
 }
 
 .post-content h2 {
