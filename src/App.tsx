@@ -415,7 +415,7 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 60);
-      const ids = ['hero', 'about', 'experience', 'side', 'education', 'posts', 'contact'];
+      const ids = ['hero', 'about', 'experience', 'side', 'education', 'contact'];
       for (const id of [...ids].reverse()) {
         const el = document.getElementById(id);
         if (el && window.scrollY >= el.offsetTop - 120) {
@@ -438,7 +438,6 @@ export default function App() {
     { id: 'experience', label: c.nav.experience },
     { id: 'side',       label: c.nav.side },
     { id: 'education',  label: c.nav.education },
-    { id: 'posts',      label: c.nav.posts },
     { id: 'contact',    label: c.nav.contact },
   ];
 
@@ -733,30 +732,6 @@ export default function App() {
       {selectedWorkProject && (
         <WorkProjectModal project={selectedWorkProject} backLabel={c.blog.back} onClose={() => setSelectedWorkSlug(null)} />
       )}
-
-      {/* ── Posts ── */}
-      <Section id="posts">
-        <SectionTitle>{c.blog.title}</SectionTitle>
-        <div className="posts-grid">
-          {posts.map(post => (
-            <button
-              key={post.slug}
-              className="glass-card post-card"
-              onClick={() => setSelectedSlug(post.slug)}
-            >
-              <div className="post-card-header">
-                <time className="post-card-date">{fmtDate(post.date)}</time>
-                <div className="post-card-tags">
-                  {post.tags.slice(0, 3).map(t => <span key={t} className="tag">{t}</span>)}
-                  {post.tags.length > 3 && <span className="tag tag--more">...]</span>}
-                </div>
-              </div>
-              <h3 className="post-card-title">{post.title}</h3>
-              <span className="project-link post-card-link">{c.blog.readMore}</span>
-            </button>
-          ))}
-        </div>
-      </Section>
 
       {/* ── Contact ── */}
       <Section id="contact" className="alt-bg">
