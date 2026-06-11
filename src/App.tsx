@@ -724,9 +724,6 @@ export default function App() {
                     </button>
                   ))}
                 </div>
-                <p className="terminal-line t-cursor-line">
-                  <span className="t-prompt">$ </span><span className="tw-cursor">▊</span>
-                </p>
               </div>
             </div>
           </div>

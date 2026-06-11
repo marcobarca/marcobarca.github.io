@@ -1375,8 +1375,6 @@
 .t-tags  { color: #7c3aed; font-size: 0.72rem; white-space: nowrap; }
 .t-time  { color: #334155; font-size: 0.72rem; white-space: nowrap; }
 
-.t-cursor-line { margin-top: 0.25rem; margin-bottom: 0; }
-
 @media (max-width: 860px) {
   .terminal-body {
     padding: 1rem 1rem 1.25rem;
