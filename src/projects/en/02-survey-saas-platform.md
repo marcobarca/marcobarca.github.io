@@ -3,6 +3,7 @@ title: "Survey SaaS Platform"
 tags: ["Azure Functions", "LangChain", "RAG", "Azure Speech", "Azure AI Foundry"]
 period: "Jul 2024 — Ongoing"
 company: "NPO Torino s.r.l."
+companyUrl: "https://www.nposervices.com/"
 ---
 
 - Serverless event-driven architecture (Azure Functions, Azure Communication Services) orchestrating outbound calls end-to-end with no human intervention
