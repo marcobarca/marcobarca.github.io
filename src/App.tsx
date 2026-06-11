@@ -563,7 +563,7 @@ export default function App() {
                       <span className="t-title">{post.title}</span>
                       <div className="t-meta">
                         <span className="t-date">{post.date}</span>
-                        <span className="t-tags">[{post.tags.join(', ')}]</span>
+                        <span className="t-tags">[{post.tags.length > 3 ? post.tags.slice(0, 3).join(', ') + ', ...' : post.tags.join(', ')}]</span>
                         <span className="t-time">{post.readTime} min</span>
                       </div>
                     </button>

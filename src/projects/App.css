@@ -1079,11 +1079,12 @@
   display: flex;
   gap: 0.75rem;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .t-date  { color: #475569; font-size: 0.72rem; white-space: nowrap; }
-.t-tags  { color: #7c3aed; font-size: 0.72rem; }
+.t-tags  { color: #7c3aed; font-size: 0.72rem; white-space: nowrap; }
 .t-time  { color: #334155; font-size: 0.72rem; white-space: nowrap; }
 
 .t-cursor-line { margin-top: 0.25rem; margin-bottom: 0; }
