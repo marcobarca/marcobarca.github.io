@@ -68,8 +68,8 @@ const CONTENT = {
     careerLabel: 'Career', workProjectsLabel: 'Projects',
     badgeWork: 'Work', badgeEdu: 'Education', badgeAward: '🏆 Award',
     items: [
-      { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', period: 'Jan 2026 — Present', type: 'work' as const, accent: 'purple' as AccentKey, description: <ul><li>Designing end-to-end architecture of a B2C SaaS platform for live online language lessons for <a href="https://languageboost.it/" target="_blank" rel="noreferrer" className="project-link">LanguageBoost</a>: Spring Boot microservices, Azure Communication Services, Azure AD B2C, Blob Storage and CDN</li><li>Technical governance: API definition, security model, and incremental MVP delivery plan scaling to 100k users and 50 simultaneous live sessions</li></ul> },
-      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', period: 'Feb 2024 — Present', type: 'work' as const, accent: 'green' as AccentKey, description: <ul><li>Led the Innovation Team driving AI, cloud, and data engineering initiatives from pre-sales and opportunity assessment through architecture, PoC delivery, and production rollout</li><li>Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and Azure AI Foundry LLM orchestration for automated topic labelling and knowledge base generation</li><li>Designed and productised a multi-tenant SaaS platform automating telephone survey workflows: Azure Functions, Azure Speech, LangChain, RAG (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), Entra ID isolation, Azure Pipelines CI/CD</li><li>Delivered data pipeline and lakehouse architectures: Medallion on PostgreSQL, PySpark & Microsoft Fabric, ERP integrations (Zucchetti REST API, OAuth2)</li></ul> },
+      { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', companyUrl: 'https://v3-advisory.com', period: 'Jan 2026 — Present', type: 'work' as const, accent: 'purple' as AccentKey, description: <ul><li>Designing end-to-end architecture of a B2C SaaS platform for live online language lessons for <a href="https://languageboost.it/" target="_blank" rel="noreferrer" className="project-link">LanguageBoost</a>: Spring Boot microservices, Azure Communication Services, Azure AD B2C, Blob Storage and CDN</li><li>Technical governance: API definition, security model, and incremental MVP delivery plan scaling to 100k users and 50 simultaneous live sessions</li></ul> },
+      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', companyUrl: undefined as string | undefined, period: 'Feb 2024 — Present', type: 'work' as const, accent: 'green' as AccentKey, description: <ul><li>Led the Innovation Team driving AI, cloud, and data engineering initiatives from pre-sales and opportunity assessment through architecture, PoC delivery, and production rollout</li><li>Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and Azure AI Foundry LLM orchestration for automated topic labelling and knowledge base generation</li><li>Designed and productised a multi-tenant SaaS platform automating telephone survey workflows: Azure Functions, Azure Speech, LangChain, RAG (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), Entra ID isolation, Azure Pipelines CI/CD</li><li>Delivered data pipeline and lakehouse architectures: Medallion on PostgreSQL, PySpark & Microsoft Fabric, ERP integrations (Zucchetti REST API, OAuth2)</li></ul> },
     ],
   },
   education: {
@@ -428,7 +428,9 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: import('./
           <h1 className="modal-title">{project.title}</h1>
           {project.company && (
             <p className="timeline-company" style={{ marginBottom: '1.5rem' }}>
-              {project.company}
+              {project.companyUrl
+                ? <a href={project.companyUrl} target="_blank" rel="noreferrer" className="project-link">{project.company} ↗</a>
+                : project.company}
               {project.client && (
                 <> · Client: {project.clientUrl
                   ? <a href={project.clientUrl} target="_blank" rel="noreferrer" className="project-link">{project.client} ↗</a>
@@ -757,7 +759,7 @@ export default function App() {
           <div>
             <p className="exp-col-label">{c.experience.careerLabel}</p>
             <div className="timeline">
-              {c.experience.items.map(({ role, company, period, description, type, accent }, i) => (
+              {c.experience.items.map(({ role, company, companyUrl, period, description, type, accent }, i) => (
                 <div key={i} className="timeline-item" style={{ '--dot-color': ACCENT[accent].dot, '--dot-glow': ACCENT[accent].glow } as React.CSSProperties}>
                   <div className="timeline-dot" />
                   <div ref={i === 0 ? v3CardRef : i === 1 ? npoCardRef : undefined} className="glass-card timeline-card">
@@ -766,7 +768,11 @@ export default function App() {
                       <span className={`timeline-badge ${type}`}>{badgeLabel(type)}</span>
                     </div>
                     <h3 className="timeline-role">{role}</h3>
-                    <p className="timeline-company">{company}</p>
+                    <p className="timeline-company">
+                      {companyUrl
+                        ? <a href={companyUrl} target="_blank" rel="noreferrer" className="project-link">{company} ↗</a>
+                        : company}
+                    </p>
                     <div className="timeline-desc">{description}</div>
                   </div>
                 </div>

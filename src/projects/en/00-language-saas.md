@@ -3,6 +3,7 @@ title: "Language Lessons SaaS"
 tags: ["Spring Boot", "Azure", "Microservices", "React", "Architecture"]
 period: "Jan 2026 — Ongoing"
 company: "V3 Advisory"
+companyUrl: "https://v3-advisory.com"
 client: "LanguageBoost"
 clientUrl: "https://languageboost.it/"
 ---
