@@ -391,9 +391,7 @@ function WorkProjectCard({
       </div>
       <h3 className="timeline-role">{title}</h3>
       <p className="timeline-company">{company}{client && <> x {client}</>}</p>
-      <div className="project-tags" style={{ marginTop: '0.6rem' }}>
-        {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
-      </div>
+      <p className="tags-line" style={{ marginTop: '0.6rem' }}>[{tags.join(', ')}]</p>
     </button>
   );
 }
@@ -448,7 +446,7 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: import('./
             {project.tags.length > 0 && (
               <>
                 <dt>Tags:</dt>
-                <dd className="tags-inline">[{project.tags.join(', ')}]</dd>
+                <dd className="tags-line">[{project.tags.join(', ')}]</dd>
               </>
             )}
           </dl>
@@ -493,7 +491,7 @@ function PostModal({ post, backLabel, onClose }: { post: Post; backLabel: string
           </p>
           <div className="modal-meta">
             <time className="post-date">{fmt(post.date)}</time>
-            <span className="tags-inline">[{post.tags.join(', ')}]</span>
+            <span className="tags-line">[{post.tags.join(', ')}]</span>
           </div>
           <h1 className="modal-title">{post.title}</h1>
           <div className="post-content">
@@ -755,9 +753,7 @@ export default function App() {
           {c.about.p1}
           {c.about.p2}
           {c.about.p3}
-          <div className="about-tags">
-            {c.about.tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
-          </div>
+          <p className="tags-line" style={{ marginTop: '0.5rem' }}>[{c.about.tags.join(', ')}]</p>
         </div>
       </Section>
 
@@ -856,9 +852,7 @@ export default function App() {
                     </div>
                     <h3 className="project-title">{title}</h3>
                     <p className="project-desc project-desc--clamped">{description}</p>
-                    <div className="project-tags">
-                      {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
-                    </div>
+                    <p className="tags-line">[{tags.join(', ')}]</p>
                   </div>
                   {link && (
                     <a href={link} target="_blank" rel="noreferrer" className="project-link">

@@ -391,19 +391,6 @@
   box-shadow: 0 12px 40px rgba(139,92,246,0.1);
 }
 
-/* ── Tag / Pill ──────────────────────────────── */
-.tag {
-  display: inline-block;
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  background: rgba(139,92,246,0.12);
-  border: 1px solid rgba(139,92,246,0.25);
-  color: #c4b5fd;
-  white-space: nowrap;
-}
-
 /* ── Buttons ─────────────────────────────────── */
 .btn-primary {
   padding: 0.7rem 1.5rem;
@@ -781,13 +768,6 @@
   font-weight: 600;
 }
 
-.about-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
 .about-image-col {
   position: relative;
 }
@@ -1130,12 +1110,6 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.project-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
 }
 
 .project-link {
@@ -1492,11 +1466,16 @@
   font-weight: 500;
 }
 
-.tags-inline {
+.tags-line {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  color: #7c3aed;
+  font-size: 0.72rem;
   font-weight: 500;
+  color: #7c3aed;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  margin: 0;
 }
 
 /* ── Markdown content ─────────────────────────── */
@@ -1704,20 +1683,6 @@
 .post-card-link {
   margin-top: 0.25rem;
   font-size: 0.85rem;
-}
-
-.post-card-tags {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  gap: 0.4rem;
-  flex-shrink: 1;
-  min-width: 0;
-}
-
-.tag--more {
-  flex-shrink: 0;
-  opacity: 0.6;
 }
 
 /* ── Footer ──────────────────────────────────── */
