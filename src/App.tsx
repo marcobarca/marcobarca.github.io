@@ -648,15 +648,8 @@ export default function App() {
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-inner">
 
-          {/* Left: logo (mobile: hamburger) */}
+          {/* Left: logo */}
           <div className="nav-left">
-            <button
-              className={`nav-hamburger ${mobileOpen ? 'open' : ''}`}
-              onClick={() => setMobileOpen(o => !o)}
-              aria-label="Menu"
-            >
-              <span /><span /><span />
-            </button>
             <button className="nav-logo" onClick={() => scrollTo('hero')} aria-label="Home">
               mb<span className="logo-cursor">_</span>
             </button>
@@ -675,8 +668,16 @@ export default function App() {
             ))}
           </div>
 
-          {/* Right spacer */}
-          <div className="nav-right" />
+          {/* Right: hamburger (mobile only) */}
+          <div className="nav-right">
+            <button
+              className={`nav-hamburger ${mobileOpen ? 'open' : ''}`}
+              onClick={() => setMobileOpen(o => !o)}
+              aria-label="Menu"
+            >
+              <span /><span /><span />
+            </button>
+          </div>
 
         </div>
       </nav>
