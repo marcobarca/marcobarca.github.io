@@ -1248,13 +1248,6 @@
   margin-bottom: 0.6rem;
 }
 
-.timeline-client {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.78rem;
-  color: #64748b;
-  margin: -0.35rem 0 0.6rem;
-}
-
 .timeline-desc {
   font-size: 0.9rem;
   color: var(--text-muted);
@@ -1496,6 +1489,13 @@
 .modal-kv dd {
   margin: 0;
   color: var(--text-muted);
+  font-weight: 500;
+}
+
+.tags-inline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #7c3aed;
   font-weight: 500;
 }
 

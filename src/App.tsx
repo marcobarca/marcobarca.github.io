@@ -390,8 +390,7 @@ function WorkProjectCard({
         <span className="timeline-badge work">{badgeLabel}</span>
       </div>
       <h3 className="timeline-role">{title}</h3>
-      <p className="timeline-company">{company}</p>
-      {client && <p className="timeline-client">Customer: {client}</p>}
+      <p className="timeline-company">{company}{client && <> x {client}</>}</p>
       <div className="project-tags" style={{ marginTop: '0.6rem' }}>
         {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
       </div>
@@ -449,7 +448,7 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: import('./
             {project.tags.length > 0 && (
               <>
                 <dt>Tags:</dt>
-                <dd><div className="post-tags">{project.tags.map(t => <span key={t} className="tag">{t}</span>)}</div></dd>
+                <dd className="tags-inline">[{project.tags.join(', ')}]</dd>
               </>
             )}
           </dl>
@@ -494,9 +493,7 @@ function PostModal({ post, backLabel, onClose }: { post: Post; backLabel: string
           </p>
           <div className="modal-meta">
             <time className="post-date">{fmt(post.date)}</time>
-            <div className="post-tags">
-              {post.tags.map(t => <span key={t} className="tag">{t}</span>)}
-            </div>
+            <span className="tags-inline">[{post.tags.join(', ')}]</span>
           </div>
           <h1 className="modal-title">{post.title}</h1>
           <div className="post-content">
