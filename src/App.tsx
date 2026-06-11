@@ -390,7 +390,8 @@ function WorkProjectCard({
         <span className="timeline-badge work">{badgeLabel}</span>
       </div>
       <h3 className="timeline-role">{title}</h3>
-      <p className="timeline-company">{company}{client && <> · {client}</>}</p>
+      <p className="timeline-company">{company}</p>
+      {client && <p className="timeline-client">Customer: {client}</p>}
       <div className="project-tags" style={{ marginTop: '0.6rem' }}>
         {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
       </div>
@@ -421,24 +422,37 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: import('./
           <p className="terminal-line" style={{ marginBottom: '1.5rem' }}>
             <span className="t-prompt">$ </span>cat {project.slug}.md
           </p>
-          <div className="modal-meta">
-            <span className="post-date" style={{ fontFamily: 'var(--mono, monospace)' }}>{project.period}</span>
-            <div className="post-tags">{project.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
-          </div>
           <h1 className="modal-title">{project.title}</h1>
-          {project.company && (
-            <p className="timeline-company" style={{ marginBottom: '1.5rem' }}>
-              {project.companyUrl
-                ? <a href={project.companyUrl} target="_blank" rel="noreferrer" className="project-link">{project.company} ↗</a>
-                : project.company}
-              {project.client && (
-                <> · Client: {project.clientUrl
+          <dl className="modal-kv">
+            {project.client && (
+              <>
+                <dt>Customer:</dt>
+                <dd>{project.clientUrl
                   ? <a href={project.clientUrl} target="_blank" rel="noreferrer" className="project-link">{project.client} ↗</a>
-                  : project.client}
-                </>
-              )}
-            </p>
-          )}
+                  : project.client}</dd>
+              </>
+            )}
+            {project.company && (
+              <>
+                <dt>Company:</dt>
+                <dd>{project.companyUrl
+                  ? <a href={project.companyUrl} target="_blank" rel="noreferrer" className="project-link">{project.company} ↗</a>
+                  : project.company}</dd>
+              </>
+            )}
+            {project.period && (
+              <>
+                <dt>Period:</dt>
+                <dd>{project.period}</dd>
+              </>
+            )}
+            {project.tags.length > 0 && (
+              <>
+                <dt>Tags:</dt>
+                <dd><div className="post-tags">{project.tags.map(t => <span key={t} className="tag">{t}</span>)}</div></dd>
+              </>
+            )}
+          </dl>
           <div className="post-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.body}</ReactMarkdown>
           </div>
