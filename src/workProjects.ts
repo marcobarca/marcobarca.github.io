@@ -2,6 +2,8 @@ export interface WorkProject {
   slug: string;
   title: string;
   company: string;
+  client: string;
+  clientUrl: string;
   tags: string[];
   period: string;
   body: string;
@@ -40,6 +42,8 @@ export const workProjects: WorkProject[] = Object.entries(modules)
       slug,
       title:   (data.title   as string) ?? slug,
       company: (data.company as string) ?? '',
+      client:  (data.client  as string) ?? '',
+      clientUrl: (data.clientUrl as string) ?? '',
       tags:    (data.tags    as string[]) ?? [],
       period:  (data.period  as string) ?? '',
       body:    content.trim(),

@@ -364,12 +364,12 @@ const fmtDate = (d: string) =>
 
 /* ── Work Project Card ─────────────────────────────────────────────── */
 function WorkProjectCard({
-  slug, title, company, period, tags,
+  slug, title, company, client, period, tags,
   accent, badgeLabel,
   forwardRef,
   onClick, onMouseEnter, onMouseLeave,
 }: {
-  slug: string; title: string; company: string; period: string; tags: string[];
+  slug: string; title: string; company: string; client?: string; period: string; tags: string[];
   accent: AccentKey; badgeLabel: string;
   forwardRef?: React.Ref<HTMLButtonElement>;
   onClick: () => void; onMouseEnter: () => void; onMouseLeave: () => void;
@@ -390,7 +390,7 @@ function WorkProjectCard({
         <span className="timeline-badge work">{badgeLabel}</span>
       </div>
       <h3 className="timeline-role">{title}</h3>
-      <p className="timeline-company">{company}</p>
+      <p className="timeline-company">{company}{client && <> · {client}</>}</p>
       <div className="project-tags" style={{ marginTop: '0.6rem' }}>
         {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
       </div>
@@ -426,7 +426,17 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: import('./
             <div className="post-tags">{project.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
           </div>
           <h1 className="modal-title">{project.title}</h1>
-          {project.company && <p className="timeline-company" style={{ marginBottom: '1.5rem' }}>{project.company}</p>}
+          {project.company && (
+            <p className="timeline-company" style={{ marginBottom: '1.5rem' }}>
+              {project.company}
+              {project.client && (
+                <> · Client: {project.clientUrl
+                  ? <a href={project.clientUrl} target="_blank" rel="noreferrer" className="project-link">{project.client} ↗</a>
+                  : project.client}
+                </>
+              )}
+            </p>
+          )}
           <div className="post-content">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.body}</ReactMarkdown>
           </div>
@@ -779,10 +789,10 @@ export default function App() {
             <p className="exp-col-label exp-col-label--mobile-only">{c.experience.workProjectsLabel}</p>
             <div style={{ paddingTop: projOffsets.paddingTop }}>
               {/* V3 project group */}
-              {workProjects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, period, tags }) => {
+              {workProjects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, client, period, tags }) => {
                 const idx = workProjects.findIndex(p => p.slug === slug);
                 return (
-                  <WorkProjectCard key={slug} slug={slug} title={title} company={company} period={period} tags={tags}
+                  <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags}
                     accent="purple" badgeLabel={c.experience.badgeWork}
                     forwardRef={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.Ref<HTMLButtonElement>}
                     onClick={() => setSelectedWorkSlug(slug)}
@@ -792,10 +802,10 @@ export default function App() {
               })}
               {/* NPO project group */}
               <div ref={npoGroupRef} className="npo-proj-group" style={{ marginTop: projOffsets.npoMarginTop, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {workProjects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, period, tags }) => {
+                {workProjects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, client, period, tags }) => {
                   const idx = workProjects.findIndex(p => p.slug === slug);
                   return (
-                    <WorkProjectCard key={slug} slug={slug} title={title} company={company} period={period} tags={tags}
+                    <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags}
                       accent="green" badgeLabel={c.experience.badgeWork}
                       forwardRef={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.Ref<HTMLButtonElement>}
                       onClick={() => setSelectedWorkSlug(slug)}

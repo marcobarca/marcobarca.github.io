@@ -3,6 +3,8 @@ title: "Language Lessons SaaS"
 tags: ["Spring Boot", "Azure", "Microservices", "React", "Architecture"]
 period: "Jan 2026 — Ongoing"
 company: "V3 Advisory"
+client: "LanguageBoost"
+clientUrl: "https://languageboost.it/"
 ---
 
 - End-to-end architecture of a B2C SaaS platform for [LanguageBoost](https://languageboost.it/): live interactive language lessons (up to 100 participants per class) with on-demand recordings, designed to scale to 100k users and 50 simultaneous live sessions
