@@ -33,3 +33,25 @@ img {
   display: block;
   max-width: 100%;
 }
+
+::selection {
+  background: rgba(139,92,246,0.35);
+  color: #fff;
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #07071a; }
+::-webkit-scrollbar-thumb {
+  background: #2d2d52;
+  border-radius: 5px;
+  border: 2px solid #07071a;
+}
+::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

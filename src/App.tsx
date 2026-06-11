@@ -97,6 +97,83 @@ const CONTENT = {
   footerBy: 'by',
 };
 
+/* ── Typewriter hook ───────────────────────────────────────────────── */
+function useTyped(text: string, start: boolean, speed = 32) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    const id = setInterval(() => {
+      setN(i => {
+        if (i >= text.length) { clearInterval(id); return i; }
+        return i + 1;
+      });
+    }, speed);
+    return () => clearInterval(id);
+  }, [start, text, speed]);
+  return text.slice(0, n);
+}
+
+/* ── Boot screen ───────────────────────────────────────────────────── */
+const BOOT_LINES = [
+  'marcOS v3.0 — bootloader',
+  '> init system ............. OK',
+  '> mount /dev/career ........ OK',
+  '> load modules: azure ai ... OK',
+  '> fetch marco.profile ...... OK',
+  '> startx --session portfolio',
+];
+
+function BootScreen({ onDone }: { onDone: () => void }) {
+  const [shown, setShown] = useState(1);
+  const [fading, setFading] = useState(false);
+  const finish = useRef(onDone);
+  finish.current = onDone;
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    const id = setInterval(() => {
+      setShown(n => {
+        if (n >= BOOT_LINES.length) { clearInterval(id); return n; }
+        return n + 1;
+      });
+    }, 240);
+    return () => { document.body.style.overflow = ''; clearInterval(id); };
+  }, []);
+
+  useEffect(() => {
+    if (shown < BOOT_LINES.length || fading) return;
+    const t = setTimeout(() => setFading(true), 550);
+    return () => clearTimeout(t);
+  }, [shown, fading]);
+
+  useEffect(() => {
+    if (!fading) return;
+    const t = setTimeout(() => finish.current(), 450);
+    return () => clearTimeout(t);
+  }, [fading]);
+
+  useEffect(() => {
+    const skip = () => setFading(true);
+    window.addEventListener('keydown', skip);
+    window.addEventListener('pointerdown', skip);
+    return () => { window.removeEventListener('keydown', skip); window.removeEventListener('pointerdown', skip); };
+  }, []);
+
+  return (
+    <div className={`boot-screen ${fading ? 'boot-fade' : ''}`}>
+      <div className="boot-inner">
+        {BOOT_LINES.slice(0, shown).map((line, i) => (
+          <p key={i} className="boot-line">
+            {line}
+            {i === shown - 1 && <span className="tw-cursor">▊</span>}
+          </p>
+        ))}
+      </div>
+      <p className="boot-skip">press any key to skip</p>
+    </div>
+  );
+}
+
 /* ── Fade-in hook ──────────────────────────────────────────────────── */
 function useFadeIn() {
   const ref = useRef<HTMLDivElement>(null);
@@ -116,21 +193,44 @@ function useFadeIn() {
   return { ref, visible };
 }
 
-/* ── Section wrapper ───────────────────────────────────────────────── */
-function Section({ id, className = '', children }: { id: string; className?: string; children: React.ReactNode }) {
+/* ── Section wrapper — each section is a window of the "OS" ────────── */
+function Section({ id, className = '', file, children }: { id: string; className?: string; file: string; children: React.ReactNode }) {
   const { ref, visible } = useFadeIn();
   return (
     <section id={id} className={`section ${className} ${visible ? 'visible' : ''}`}>
-      <div ref={ref} className="section-inner">{children}</div>
+      <div ref={ref} className="section-inner">
+        <div className="section-window">
+          <div className="section-window-bar">
+            <span className="terminal-dot dot-red" />
+            <span className="terminal-dot dot-yellow" />
+            <span className="terminal-dot dot-green" />
+            <span className="terminal-wintitle">marco@portfolio: ~/{file}</span>
+            <span className="win-controls" aria-hidden>─ ◻ ✕</span>
+          </div>
+          <div className="section-window-body">{children}</div>
+        </div>
+      </div>
     </section>
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+function SectionTitle({ num, cmd, children }: { num?: string; cmd?: string; children: React.ReactNode }) {
+  const { ref, visible } = useFadeIn();
+  const typed = useTyped(cmd ?? '', visible);
+  const done = !cmd || typed.length === cmd.length;
   return (
-    <div className="section-title-wrapper">
-      <h2 className="section-title">{children}</h2>
-      <div className="section-title-line" />
+    <div ref={ref} className="section-title-wrapper">
+      {cmd && (
+        <p className="section-cmd">
+          <span className="t-prompt">$ </span>{typed}
+          {!done && <span className="tw-cursor">▊</span>}
+        </p>
+      )}
+      <h2 className={`section-title ${done ? 'shown' : ''}`}>
+        {num && <span className="section-num">{num}.</span>}
+        {children}
+      </h2>
+      <div className={`section-title-line ${done ? 'shown' : ''}`} />
     </div>
   );
 }
@@ -231,7 +331,7 @@ function AnimatedBeam({
               animationDelay: `${delay}s`,
             }}
           />
-          {cardRect && !suppressGlow && (
+          {cardRect && (
             <rect
               x={cardRect.x} y={cardRect.y}
               width={cardRect.w} height={cardRect.h}
@@ -240,6 +340,9 @@ function AnimatedBeam({
               stroke={beam}
               strokeWidth="1.5"
               style={{
+                // visibility (not unmount/display) keeps the CSS animation
+                // clock running, so the glow stays in phase with the beam
+                visibility: suppressGlow ? 'hidden' : 'visible',
                 filter: `drop-shadow(0 0 6px ${shadow}) drop-shadow(0 0 14px ${shadow})`,
                 animation: `${rgKf} ${DUR}s linear infinite`,
                 animationDelay: `${delay}s`,
@@ -383,6 +486,24 @@ function PostModal({ post, backLabel, onClose }: { post: Post; backLabel: string
 export default function App() {
   const c = CONTENT;
 
+  const [booting, setBooting] = useState(() => {
+    try { return !sessionStorage.getItem('mb-booted'); } catch { return false; }
+  });
+  const bootDone = () => {
+    try { sessionStorage.setItem('mb-booted', '1'); } catch { /* private mode */ }
+    setBooting(false);
+  };
+
+  const HERO_NAME = 'Marco Barca';
+  const heroTyped = useTyped(HERO_NAME, !booting, 75);
+  const heroDone = heroTyped.length === HERO_NAME.length;
+
+  const [clock, setClock] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setClock(new Date()), 30000);
+    return () => clearInterval(id);
+  }, []);
+
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -484,14 +605,29 @@ export default function App() {
     : type === 'award' ? c.experience.badgeAward
     : c.experience.badgeEdu;
 
+  // Mouse-tracking spotlight on glass cards (sets --mx/--my consumed by CSS)
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      const card = (e.target as HTMLElement).closest?.('.glass-card') as HTMLElement | null;
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      card.style.setProperty('--my', `${e.clientY - r.top}px`);
+    };
+    document.addEventListener('pointermove', onMove, { passive: true });
+    return () => document.removeEventListener('pointermove', onMove);
+  }, []);
+
   return (
     <div className="app">
+
+      {booting && <BootScreen onDone={bootDone} />}
 
       {/* ── Navbar ── */}
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-inner">
 
-          {/* Left spacer (mobile: hamburger) */}
+          {/* Left: logo (mobile: hamburger) */}
           <div className="nav-left">
             <button
               className={`nav-hamburger ${mobileOpen ? 'open' : ''}`}
@@ -499,6 +635,9 @@ export default function App() {
               aria-label="Menu"
             >
               <span /><span /><span />
+            </button>
+            <button className="nav-logo" onClick={() => scrollTo('hero')} aria-label="Home">
+              mb<span className="logo-cursor">_</span>
             </button>
           </div>
 
@@ -528,20 +667,26 @@ export default function App() {
 
           {/* Left: identity */}
           <div className="hero-content">
-            <div className="hero-social">
-              <a href="https://github.com/marcobarca" target="_blank" rel="noreferrer" className="hero-social-link" aria-label="GitHub">
-                <img src={githubLogo} alt="GitHub" />
-              </a>
-              <a href="https://www.linkedin.com/in/marco-barca-9a6b49a5/" target="_blank" rel="noreferrer" className="hero-social-link" aria-label="LinkedIn">
-                <img src={linkedinLogo} alt="LinkedIn" />
-              </a>
+            <p className="hero-eyebrow"><span className="t-prompt">~$ </span>whoami</p>
+
+            <h1 className="hero-name">{heroTyped}<span className="hero-cursor" /></h1>
+            <p className={`hero-subtitle hero-reveal ${heroDone ? 'shown' : ''}`}>Computer Engineer · Cloud & AI Solution Architect</p>
+
+            <div className={`hero-badge hero-reveal ${heroDone ? 'shown' : ''}`}>
+              <span className="hero-badge-dot" />
+              Open to collaborations
             </div>
 
-            <h1 className="hero-name">Marco Barca</h1>
-            <p className="hero-subtitle">Computer Engineer</p>
-
-            <div className="hero-cta">
-              <a className="btn-outline" href="/CV-Marco-Barca.pdf" download aria-label="Download CV">Download CV</a>
+            <div className={`hero-cta hero-reveal ${heroDone ? 'shown' : ''}`}>
+              <a className="btn-primary" href="/CV-Marco-Barca.pdf" download aria-label="Download CV">Download CV</a>
+              <div className="hero-social">
+                <a href="https://github.com/marcobarca" target="_blank" rel="noreferrer" className="hero-social-link" aria-label="GitHub">
+                  <img src={githubLogo} alt="GitHub" />
+                </a>
+                <a href="https://www.linkedin.com/in/marco-barca-9a6b49a5/" target="_blank" rel="noreferrer" className="hero-social-link" aria-label="LinkedIn">
+                  <img src={linkedinLogo} alt="LinkedIn" />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -584,8 +729,8 @@ export default function App() {
       </section>
 
       {/* ── About ── */}
-      <Section id="about">
-        <SectionTitle>{c.about.title}</SectionTitle>
+      <Section id="about" file="about.md">
+        <SectionTitle num="01" cmd="cat about.md">{c.about.title}</SectionTitle>
         <div className="about-text">
           {c.about.p1}
           {c.about.p2}
@@ -597,8 +742,8 @@ export default function App() {
       </Section>
 
       {/* ── Experience + Work Projects ── */}
-      <Section id="experience" className="alt-bg">
-        <SectionTitle>{c.experience.title}</SectionTitle>
+      <Section id="experience" className="alt-bg" file="experience.log">
+        <SectionTitle num="02" cmd="tail -f experience.log">{c.experience.title}</SectionTitle>
         <div ref={expContainerRef} className="exp-split" style={{ position: 'relative' }}>
 
           {/* Left: career timeline */}
@@ -666,8 +811,8 @@ export default function App() {
       </Section>
 
       {/* ── Side Projects ── */}
-      <Section id="side">
-        <SectionTitle>{c.projects.sideTitle}</SectionTitle>
+      <Section id="side" file="side-projects">
+        <SectionTitle num="03" cmd="ls ~/side-projects">{c.projects.sideTitle}</SectionTitle>
         <div className="carousel-wrapper">
           <button
             className="carousel-btn"
@@ -722,8 +867,8 @@ export default function App() {
       </Section>
 
       {/* ── Education ── */}
-      <Section id="education" className="alt-bg">
-        <SectionTitle>{c.education.title}</SectionTitle>
+      <Section id="education" className="alt-bg" file="education.md">
+        <SectionTitle num="04" cmd="cat education.md">{c.education.title}</SectionTitle>
 
         <p className="exp-col-label" style={{ marginBottom: '1.25rem' }}>{c.education.degreesLabel}</p>
         <div className="edu-degrees-grid">
@@ -765,8 +910,8 @@ export default function App() {
       )}
 
       {/* ── Contact ── */}
-      <Section id="contact">
-        <SectionTitle>{c.contact.title}</SectionTitle>
+      <Section id="contact" file="contact.sh">
+        <SectionTitle num="05" cmd="./contact.sh">{c.contact.title}</SectionTitle>
         <p className="contact-subtitle">{c.contact.subtitle}</p>
         <div className="contact-grid">
           {c.contact.items.map(({ icon, label, value, href }) => (
@@ -798,6 +943,13 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* ── tmux-style status bar ── */}
+      <div className="status-bar" aria-hidden>
+        <span className="sb-session">[marcOS] 0:portfolio*</span>
+        <span className="sb-path">~/{activeSection === 'hero' ? '' : activeSection}</span>
+        <span className="sb-time">{clock.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
+      </div>
     </div>
   );
 }
