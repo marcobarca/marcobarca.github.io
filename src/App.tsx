@@ -66,7 +66,6 @@ const CONTENT = {
   experience: {
     title: 'Experience',
     careerLabel: 'Career', workProjectsLabel: 'Projects',
-    badgeWork: 'Work', badgeEdu: 'Education', badgeAward: '🏆 Award',
     items: [
       { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', companyUrl: 'https://v3-advisory.com', period: 'Jan 2026 — Present', type: 'work' as const, accent: 'purple' as AccentKey, description: <ul><li>Designing end-to-end architecture of a B2C SaaS platform for live online language lessons for LanguageBoost: Spring Boot microservices, Azure Communication Services, Azure AD B2C, Blob Storage and CDN</li><li>Technical governance: API definition, security model, and incremental MVP delivery plan scaling to 100k users and 50 simultaneous live sessions</li></ul> },
       { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', companyUrl: 'https://www.nposervices.com/', period: 'Feb 2024 — Present', type: 'work' as const, accent: 'green' as AccentKey, description: <ul><li>Led the Innovation Team driving AI, cloud, and data engineering initiatives from pre-sales and opportunity assessment through architecture, PoC delivery, and production rollout</li><li>Built an end-to-end ML pipeline for IT ticket intelligence at a global manufacturing enterprise: ServiceNow ingestion, semantic embeddings, UMAP, HDBSCAN, and Azure AI Foundry LLM orchestration for automated topic labelling and knowledge base generation</li><li>Designed and productised a multi-tenant SaaS platform automating telephone survey workflows: Azure Functions, Azure Speech, LangChain, RAG (Azure Cognitive Search), multilingual support (Azure Translator + neural TTS), Entra ID isolation, Azure Pipelines CI/CD</li><li>Delivered data pipeline and lakehouse architectures: Medallion on PostgreSQL, PySpark & Microsoft Fabric, ERP integrations (Zucchetti REST API, OAuth2)</li></ul> },
@@ -365,12 +364,12 @@ const fmtDate = (d: string) =>
 /* ── Work Project Card ─────────────────────────────────────────────── */
 function WorkProjectCard({
   slug, title, company, client, period, tags,
-  accent, badgeLabel,
+  accent,
   forwardRef,
   onClick, onMouseEnter, onMouseLeave,
 }: {
   slug: string; title: string; company: string; client?: string; period: string; tags: string[];
-  accent: AccentKey; badgeLabel: string;
+  accent: AccentKey;
   forwardRef?: React.Ref<HTMLButtonElement>;
   onClick: () => void; onMouseEnter: () => void; onMouseLeave: () => void;
 }) {
@@ -387,7 +386,6 @@ function WorkProjectCard({
     >
       <div className="timeline-header">
         <span className="timeline-period">{period}</span>
-        <span className="timeline-badge work">{badgeLabel}</span>
       </div>
       <h3 className="timeline-role">{title}</h3>
       <p className="timeline-company">{company}{client && <> x {client}</>}</p>
@@ -621,11 +619,6 @@ export default function App() {
     { id: 'contact',    label: c.nav.contact },
   ];
 
-  const badgeLabel = (type: 'work' | 'edu' | 'award') =>
-    type === 'work' ? c.experience.badgeWork
-    : type === 'award' ? c.experience.badgeAward
-    : c.experience.badgeEdu;
-
   // Mouse-tracking spotlight on glass cards (sets --mx/--my consumed by CSS)
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -767,13 +760,12 @@ export default function App() {
           <div>
             <p className="exp-col-label">{c.experience.careerLabel}</p>
             <div className="timeline">
-              {c.experience.items.map(({ role, company, companyUrl, period, description, type, accent }, i) => (
+              {c.experience.items.map(({ role, company, companyUrl, period, description, accent }, i) => (
                 <div key={i} className="timeline-item" style={{ '--dot-color': ACCENT[accent].dot, '--dot-glow': ACCENT[accent].glow } as React.CSSProperties}>
                   <div className="timeline-dot" />
                   <div ref={i === 0 ? v3CardRef : i === 1 ? npoCardRef : undefined} className="glass-card timeline-card">
                     <div className="timeline-header">
                       <span className="timeline-period">{period}</span>
-                      <span className={`timeline-badge ${type}`}>{badgeLabel(type)}</span>
                     </div>
                     <h3 className="timeline-role">{role}</h3>
                     <p className="timeline-company">
@@ -804,7 +796,7 @@ export default function App() {
                 const idx = workProjects.findIndex(p => p.slug === slug);
                 return (
                   <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags}
-                    accent="purple" badgeLabel={c.experience.badgeWork}
+                    accent="purple"
                     forwardRef={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.Ref<HTMLButtonElement>}
                     onClick={() => setSelectedWorkSlug(slug)}
                     onMouseEnter={() => setHoveredProj(idx)} onMouseLeave={() => setHoveredProj(null)}
@@ -817,7 +809,7 @@ export default function App() {
                   const idx = workProjects.findIndex(p => p.slug === slug);
                   return (
                     <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags}
-                      accent="green" badgeLabel={c.experience.badgeWork}
+                      accent="green"
                       forwardRef={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.Ref<HTMLButtonElement>}
                       onClick={() => setSelectedWorkSlug(slug)}
                       onMouseEnter={() => setHoveredProj(idx)} onMouseLeave={() => setHoveredProj(null)}

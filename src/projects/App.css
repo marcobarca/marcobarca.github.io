@@ -1179,34 +1179,6 @@
   color: var(--text-dim);
 }
 
-.timeline-badge {
-  display: inline-block;
-  padding: 0.18rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.timeline-badge.work {
-  background: rgba(139,92,246,0.12);
-  border: 1px solid rgba(139,92,246,0.3);
-  color: #c4b5fd;
-}
-
-.timeline-badge.edu {
-  background: rgba(59,130,246,0.12);
-  border: 1px solid rgba(59,130,246,0.3);
-  color: #93c5fd;
-}
-
-.timeline-badge.award {
-  background: rgba(234,179,8,0.12);
-  border: 1px solid rgba(234,179,8,0.3);
-  color: #fde68a;
-}
-
 .timeline-role {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.05rem;
