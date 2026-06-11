@@ -183,6 +183,8 @@ function AnimatedBeam({
     window.addEventListener('resize', calc);
     const ro = new ResizeObserver(calc);
     if (containerRef.current) ro.observe(containerRef.current);
+    if (fromRef.current) ro.observe(fromRef.current);
+    if (toRef.current) ro.observe(toRef.current);
     return () => { window.removeEventListener('resize', calc); ro.disconnect(); };
   }, [containerRef, fromRef, toRef, recalcDep]);
 
@@ -256,6 +258,42 @@ function AnimatedBeam({
 
 const fmtDate = (d: string) =>
   new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+/* ── Work Project Card ─────────────────────────────────────────────── */
+function WorkProjectCard({
+  slug, title, company, period, tags,
+  accent, badgeLabel,
+  forwardRef,
+  onClick, onMouseEnter, onMouseLeave,
+}: {
+  slug: string; title: string; company: string; period: string; tags: string[];
+  accent: AccentKey; badgeLabel: string;
+  forwardRef?: React.Ref<HTMLButtonElement>;
+  onClick: () => void; onMouseEnter: () => void; onMouseLeave: () => void;
+}) {
+  const a = ACCENT[accent];
+  return (
+    <button
+      key={slug}
+      ref={forwardRef}
+      className="glass-card timeline-card timeline-card--project timeline-card--clickable"
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      style={{ '--card-bg': a.cardBg, '--card-border': a.cardBorder, '--card-hover': a.cardHover, '--card-shadow': a.cardShadow, '--period-color': a.period, '--role-color': a.role } as React.CSSProperties}
+    >
+      <div className="timeline-header">
+        <span className="timeline-period">{period}</span>
+        <span className="timeline-badge work">{badgeLabel}</span>
+      </div>
+      <h3 className="timeline-role">{title}</h3>
+      <p className="timeline-company">{company}</p>
+      <div className="project-tags" style={{ marginTop: '0.6rem' }}>
+        {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
+      </div>
+    </button>
+  );
+}
 
 /* ── Work Project Modal ────────────────────────────────────────────── */
 function WorkProjectModal({ project, backLabel, onClose }: { project: import('./workProjects').WorkProject; backLabel: string; onClose: () => void }) {
@@ -585,11 +623,11 @@ export default function App() {
           </div>
 
           {/* Beams: V3 card → V3 project (blue) */}
-          <AnimatedBeam containerRef={expContainerRef} fromRef={v3CardRef  as React.RefObject<HTMLElement>} toRef={proj0Ref as React.RefObject<HTMLElement>} delay={0}    beamId="v0" accentColor="purple" suppressGlow={hoveredProj === 0} />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={v3CardRef  as React.RefObject<HTMLElement>} toRef={proj0Ref as React.RefObject<HTMLElement>} delay={0}    beamId="v0" accentColor="purple" suppressGlow={hoveredProj === 0} recalcDep={projOffsets} />
           {/* Beams: NPO card → 3 NPO projects */}
-          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj1Ref as React.RefObject<HTMLElement>} delay={0}    beamId="n1" accentColor="green" suppressGlow={hoveredProj === 1} />
-          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj2Ref as React.RefObject<HTMLElement>} delay={0.83} duration={3.5} beamId="n2" accentColor="green" suppressGlow={hoveredProj === 2} />
-          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj3Ref as React.RefObject<HTMLElement>} delay={1.66} duration={4.5} beamId="n3" accentColor="green" suppressGlow={hoveredProj === 3} />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj1Ref as React.RefObject<HTMLElement>} delay={0}    beamId="n1" accentColor="green" suppressGlow={hoveredProj === 1} recalcDep={projOffsets} />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj2Ref as React.RefObject<HTMLElement>} delay={0.83} duration={3.5} beamId="n2" accentColor="green" suppressGlow={hoveredProj === 2} recalcDep={projOffsets} />
+          <AnimatedBeam containerRef={expContainerRef} fromRef={npoCardRef as React.RefObject<HTMLElement>} toRef={proj3Ref as React.RefObject<HTMLElement>} delay={1.66} duration={4.5} beamId="n3" accentColor="green" suppressGlow={hoveredProj === 3} recalcDep={projOffsets} />
 
           {/* Right: work projects */}
           <div>
@@ -599,16 +637,12 @@ export default function App() {
               {workProjects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, period, tags }) => {
                 const idx = workProjects.findIndex(p => p.slug === slug);
                 return (
-                  <button key={slug} ref={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.RefObject<HTMLButtonElement>}
-                    className="glass-card timeline-card timeline-card--project timeline-card--clickable"
+                  <WorkProjectCard key={slug} slug={slug} title={title} company={company} period={period} tags={tags}
+                    accent="purple" badgeLabel={c.experience.badgeWork}
+                    forwardRef={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.Ref<HTMLButtonElement>}
                     onClick={() => setSelectedWorkSlug(slug)}
                     onMouseEnter={() => setHoveredProj(idx)} onMouseLeave={() => setHoveredProj(null)}
-                    style={{ '--card-bg': ACCENT.purple.cardBg, '--card-border': ACCENT.purple.cardBorder, '--card-hover': ACCENT.purple.cardHover, '--card-shadow': ACCENT.purple.cardShadow, '--period-color': ACCENT.purple.period, '--role-color': ACCENT.purple.role } as React.CSSProperties}>
-                    <div className="timeline-header"><span className="timeline-period">{period}</span><span className="timeline-badge work">{c.experience.badgeWork}</span></div>
-                    <h3 className="timeline-role">{title}</h3>
-                    <p className="timeline-company">{company}</p>
-                    <div className="project-tags" style={{ marginTop: '0.6rem' }}>{tags.map(tag => <span key={tag} className="tag">{tag}</span>)}</div>
-                  </button>
+                  />
                 );
               })}
               {/* NPO project group */}
@@ -616,16 +650,12 @@ export default function App() {
                 {workProjects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, period, tags }) => {
                   const idx = workProjects.findIndex(p => p.slug === slug);
                   return (
-                    <button key={slug} ref={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.RefObject<HTMLButtonElement>}
-                      className="glass-card timeline-card timeline-card--project timeline-card--clickable"
+                    <WorkProjectCard key={slug} slug={slug} title={title} company={company} period={period} tags={tags}
+                      accent="green" badgeLabel={c.experience.badgeWork}
+                      forwardRef={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.Ref<HTMLButtonElement>}
                       onClick={() => setSelectedWorkSlug(slug)}
                       onMouseEnter={() => setHoveredProj(idx)} onMouseLeave={() => setHoveredProj(null)}
-                      style={{ '--card-bg': ACCENT.green.cardBg, '--card-border': ACCENT.green.cardBorder, '--card-hover': ACCENT.green.cardHover, '--card-shadow': ACCENT.green.cardShadow, '--period-color': ACCENT.green.period, '--role-color': ACCENT.green.role } as React.CSSProperties}>
-                      <div className="timeline-header"><span className="timeline-period">{period}</span><span className="timeline-badge work">{c.experience.badgeWork}</span></div>
-                      <h3 className="timeline-role">{title}</h3>
-                      <p className="timeline-company">{company}</p>
-                      <div className="project-tags" style={{ marginTop: '0.6rem' }}>{tags.map(tag => <span key={tag} className="tag">{tag}</span>)}</div>
-                    </button>
+                    />
                   );
                 })}
               </div>
