@@ -1,10 +1,10 @@
 ---
 title: "Language Lessons SaaS"
-tags: ["Spring Boot", "Azure AD B2C", "Stripe", "DDD", "Architecture"]
+tags: ["Spring Boot", "Azure", "Microservices", "React", "Architecture"]
 period: "Jan 2026 — Ongoing"
 company: "V3 Advisory"
 ---
 
-- End-to-end architecture of a B2C SaaS platform for live online language lessons: modular monolith (Spring Boot), DDD-light domain model, Azure AD B2C, Stripe payments, Azure Blob Storage
-- Bounded context design, API definition, and RBAC security model with ownership rules
-- Incremental MVP delivery plan with phased scope and technical governance
+- End-to-end architecture of a B2C SaaS platform for [LanguageBoost](https://languageboost.it/): live interactive language lessons (up to 100 participants per class) with on-demand recordings, designed to scale to 100k users and 50 simultaneous live sessions
+- Cloud-native Azure design: Spring Boot microservices (Event, Content, User Profile), Azure Communication Services and Media Services for live video and recording, Azure AD B2C federated login, Azure SQL, Blob Storage and CDN
+- Technical governance: API definition via Azure API Management, security and compliance (OAuth2/OIDC, Key Vault, GDPR), incremental MVP roadmap with a broadcast-mode evolution path for large events
