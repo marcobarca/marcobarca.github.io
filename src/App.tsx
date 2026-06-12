@@ -41,7 +41,7 @@ type AccentKey = keyof typeof ACCENT;
 /* ── Content ─────────────────────────────────────────────────────────── */
 const CONTENT_EN = {
   nav: { about: 'About', posts: 'Posts', experience: 'Experience', side: 'Side Projects', education: 'Education', contact: 'Contact' },
-  blog: { title: 'Posts', readMore: 'Read →', minRead: 'min read', back: '← Back to posts' },
+  blog: { title: 'Posts', readMore: 'Read →', minRead: 'min read', back: '← Back to posts', hint: 'click a post to read it' },
   hero: { subtitle: 'Computer Engineer · Cloud & AI Solution Architect', badge: 'Open to collaborations', cv: 'Download CV' },
   modal: { customer: 'Customer:', company: 'Company:', period: 'Period:', tags: 'Tags:' },
   about: {
@@ -97,7 +97,7 @@ const CONTENT_EN = {
 
 const CONTENT_IT: typeof CONTENT_EN = {
   nav: { about: 'Chi sono', posts: 'Post', experience: 'Esperienza', side: 'Side Project', education: 'Formazione', contact: 'Contatti' },
-  blog: { title: 'Post', readMore: 'Leggi →', minRead: 'min di lettura', back: '← Torna ai post' },
+  blog: { title: 'Post', readMore: 'Leggi →', minRead: 'min di lettura', back: '← Torna ai post', hint: 'clicca un post per leggerlo' },
   hero: { subtitle: 'Ingegnere Informatico · Cloud & AI Solution Architect', badge: 'Aperto a collaborazioni', cv: 'Scarica il CV' },
   modal: { customer: 'Cliente:', company: 'Azienda:', period: 'Periodo:', tags: 'Tag:' },
   about: {
@@ -813,10 +813,12 @@ export default function App() {
                         <span className="t-date">{post.date}</span>
                         <span className="t-tags">[{post.tags.length > 3 ? post.tags.slice(0, 3).join(', ') + ', ...' : post.tags.join(', ')}]</span>
                         <span className="t-time">{post.readTime} min</span>
+                        <span className="t-read">{c.blog.readMore}</span>
                       </div>
                     </button>
                   ))}
                 </div>
+                <p className="terminal-line t-hint"><span className="t-prompt">$ </span># {c.blog.hint}<span className="t-caret" /></p>
               </div>
             </div>
           </div>
