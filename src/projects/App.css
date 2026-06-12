@@ -194,7 +194,36 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 0.75rem;
 }
+
+/* Language switch */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.lang-btn {
+  padding: 0.3rem 0.35rem;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  transition: color 0.2s, background 0.2s;
+}
+
+.lang-btn:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.lang-btn.active { color: var(--purple); }
+
+.lang-sep { color: var(--text-muted); opacity: 0.5; font-size: 0.78rem; }
 
 
 /* Hamburger — hidden on desktop, shown on mobile */
@@ -1657,45 +1686,3 @@
   font-size: 0.85rem;
 }
 
-/* ── Footer ──────────────────────────────────── */
-.footer {
-  border-top: 1px solid var(--border);
-  padding: 2.5rem 1.5rem calc(2.5rem + 28px); /* room for the status bar */
-}
-
-.footer-inner {
-  position: relative;
-  z-index: 1; /* above the scanline layer */
-  max-width: var(--max-w);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.footer-inner p {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.heart { color: #f43f5e; }
-
-.footer-social {
-  display: flex;
-  gap: 1rem;
-}
-
-.footer-social a {
-  opacity: 0.45;
-  transition: opacity 0.2s;
-}
-
-.footer-social a:hover { opacity: 1; }
-
-.footer-social img {
-  width: 20px;
-  height: 20px;
-  filter: invert(1);
-}

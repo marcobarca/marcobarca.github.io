@@ -28,26 +28,36 @@ function parseFrontmatter(raw: string): { data: Record<string, unknown>; content
   return { data, content: m[2] };
 }
 
-const modules = import.meta.glob('./projects/en/*.md', {
+const modules = import.meta.glob('./projects/*/*.md', {
   query: '?raw',
   import: 'default',
   eager: true,
 }) as Record<string, string>;
 
-export const workProjects: WorkProject[] = Object.entries(modules)
-  .sort(([a], [b]) => a.localeCompare(b))
-  .map(([path, raw]) => {
-    const { data, content } = parseFrontmatter(raw);
-    const slug = path.split('/').pop()!.replace('.md', '');
-    return {
-      slug,
-      title:   (data.title   as string) ?? slug,
-      company: (data.company as string) ?? '',
-      companyUrl: (data.companyUrl as string) ?? '',
-      client:  (data.client  as string) ?? '',
-      clientUrl: (data.clientUrl as string) ?? '',
-      tags:    (data.tags    as string[]) ?? [],
-      period:  (data.period  as string) ?? '',
-      body:    content.trim(),
-    };
-  });
+export type Lang = 'en' | 'it';
+
+function buildProjects(lang: Lang): WorkProject[] {
+  return Object.entries(modules)
+    .filter(([path]) => path.includes(`/projects/${lang}/`))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([path, raw]) => {
+      const { data, content } = parseFrontmatter(raw);
+      const slug = path.split('/').pop()!.replace('.md', '');
+      return {
+        slug,
+        title:   (data.title   as string) ?? slug,
+        company: (data.company as string) ?? '',
+        companyUrl: (data.companyUrl as string) ?? '',
+        client:  (data.client  as string) ?? '',
+        clientUrl: (data.clientUrl as string) ?? '',
+        tags:    (data.tags    as string[]) ?? [],
+        period:  (data.period  as string) ?? '',
+        body:    content.trim(),
+      };
+    });
+}
+
+export const workProjects: Record<Lang, WorkProject[]> = {
+  en: buildProjects('en'),
+  it: buildProjects('it'),
+};

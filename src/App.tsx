@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import githubLogo from './assets/github.svg';
 import linkedinLogo from './assets/linkedin.svg';
 import { posts, type Post } from './posts';
-import { workProjects } from './workProjects';
+import { workProjects, type Lang } from './workProjects';
 import './projects/App.css';
 
 /* ── Color palette for timeline accents ──────────────────────────────── */
@@ -39,10 +39,11 @@ const ACCENT = {
 type AccentKey = keyof typeof ACCENT;
 
 /* ── Content ─────────────────────────────────────────────────────────── */
-const CONTENT = {
+const CONTENT_EN = {
   nav: { about: 'About', posts: 'Posts', experience: 'Experience', side: 'Side Projects', education: 'Education', contact: 'Contact' },
   blog: { title: 'Posts', readMore: 'Read →', minRead: 'min read', back: '← Back to posts' },
-  hero: { cta1: 'Learn more', cta2: 'My projects' },
+  hero: { subtitle: 'Computer Engineer · Cloud & AI Solution Architect', badge: 'Open to collaborations', cv: 'Download CV' },
+  modal: { customer: 'Customer:', company: 'Company:', period: 'Period:', tags: 'Tags:' },
   about: {
     title: 'About me',
     p1: <p>I'm a <strong>Computer Engineer</strong> specialising in <strong>cloud architecture</strong>, <strong>generative AI</strong>, and solution design. I build complex systems, from multi-tenant SaaS platforms to AI pipelines for enterprise clients.</p>,
@@ -92,9 +93,65 @@ const CONTENT = {
       { icon: 'linkedin', label: 'LinkedIn', value: 'in/marco-barca',           href: 'https://www.linkedin.com/in/marco-barca-9a6b49a5/' },
     ],
   },
-  footer: 'Made with',
-  footerBy: 'by',
 };
+
+const CONTENT_IT: typeof CONTENT_EN = {
+  nav: { about: 'Chi sono', posts: 'Post', experience: 'Esperienza', side: 'Side Project', education: 'Formazione', contact: 'Contatti' },
+  blog: { title: 'Post', readMore: 'Leggi →', minRead: 'min di lettura', back: '← Torna ai post' },
+  hero: { subtitle: 'Ingegnere Informatico · Cloud & AI Solution Architect', badge: 'Aperto a collaborazioni', cv: 'Scarica il CV' },
+  modal: { customer: 'Cliente:', company: 'Azienda:', period: 'Periodo:', tags: 'Tag:' },
+  about: {
+    title: 'Chi sono',
+    p1: <p>Sono un <strong>Ingegnere Informatico</strong> specializzato in <strong>architetture cloud</strong>, <strong>AI generativa</strong> e solution design. Costruisco sistemi complessi, da piattaforme SaaS multi-tenant a pipeline AI per clienti enterprise.</p>,
+    p2: <p>Lavoro all'intersezione tra cloud engineering, LLM e architettura software. Mi piace trasformare le tecnologie emergenti in prodotti concreti: sistemi che scalano, si integrano e generano reale valore di business.</p>,
+    p3: <p>Ho conseguito la Laurea Magistrale in Ingegneria Informatica con focus in <strong>Cybersecurity</strong> al Politecnico di Torino. Attualmente guido iniziative di innovazione e definisco la direzione tecnica di progetti AI e cloud. Nel 2022 mi sono classificato <strong>2º all'Hackathon Encode × Algorand</strong>, costruendo una piattaforma di crowdfunding decentralizzata sulla blockchain Algorand.</p>,
+    tags: ['Solution Architecture', 'Cloud & Azure', 'AI / LLM', 'Data Engineering'],
+  },
+  projects: {
+    sideTitle: 'Side Project', linkLabel: 'Vedi su GitHub →',
+    items: [
+      { title: 'cleanux', description: 'Tool AI-driven per il monitoraggio e la pulizia di server Linux. Analizza lo stato del sistema e suggerisce in modo intelligente azioni di ottimizzazione.', tags: ['Shell', 'AI', 'Linux'], link: 'https://github.com/marcobarca/cleanux' },
+      { title: 'AttackModeler', description: 'Framework per modellare e analizzare il comportamento degli attaccanti usando GPT. Estrae pattern dai report CTF per costruire una rappresentazione strutturata degli attacchi. Sviluppato per la mia tesi magistrale.', tags: ['Python', 'AI', 'Cybersecurity'], link: 'https://github.com/marcobarca/AttackModeler' },
+      { title: 'microhttp', description: 'Server HTTP minimalista scritto in C puro, senza dipendenze esterne. Progetto didattico per capire come funzionano i web server a basso livello.', tags: ['C', 'Systems', 'Networking'], link: 'https://github.com/marcobarca/microhttp' },
+      { title: 'Algorand Crowdfunding', description: "Piattaforma di crowdfunding decentralizzata su blockchain Algorand. Sviluppata durante l'Hackathon Encode x Algorand (2º posto).", tags: ['JavaScript', 'Blockchain', 'Algorand'], link: 'https://github.com/marcobarca/Algorand_Crowdfunding_platform' },
+      { title: 'Public Transport System', description: "Sistema informativo web per la gestione di biglietteria e controllo automatico degli accessi dei veicoli per un'azienda di trasporto pubblico.", tags: ['Kotlin', 'Web', 'Backend'], link: 'https://github.com/marcobarca/Public-transport-company-web-based-information-system' },
+      { title: 'EZShop', description: 'Applicazione per la gestione integrata di vendite, inventario, ordini di fornitura e contabilità clienti.', tags: ['Java'], link: 'https://github.com/marcobarca/EZShop' },
+      { title: 'LandTiger ARM Game', description: "Gioco sviluppato in C su una scheda ARM LandTiger LPC1768. Progetto di sistemi embedded con gestione diretta dell'hardware.", tags: ['C', 'Embedded', 'ARM'], link: 'https://github.com/marcobarca/LandTiger-ARM-board-game' },
+      { title: 'Crucipuzzle', description: 'Gioco di crucipuzzle online realizzato con React. Interfaccia interattiva con logica di gioco client-side.', tags: ['JavaScript', 'React'], link: 'https://github.com/marcobarca/Crucipuzzle' },
+    ],
+  },
+  experience: {
+    title: 'Esperienza',
+    careerLabel: 'Carriera', workProjectsLabel: 'Progetti',
+    items: [
+      { role: 'Solution Architect & Tech Advisor', company: 'V3 Advisory', companyUrl: 'https://v3-advisory.com', period: 'Gen 2026 — Oggi', type: 'work' as const, accent: 'purple' as AccentKey, description: <ul><li>Progettazione dell'architettura end-to-end di una piattaforma SaaS B2C per lezioni di lingua live online per LanguageBoost: microservizi Spring Boot, Azure Communication Services, Azure AD B2C, Blob Storage e CDN</li><li>Governance tecnica: definizione delle API, modello di sicurezza e piano di delivery MVP incrementale con scalabilità fino a 100k utenti e 50 sessioni live simultanee</li></ul> },
+      { role: 'Cloud Solutions Engineer', company: 'NPO Torino s.r.l.', companyUrl: 'https://www.nposervices.com/', period: 'Feb 2024 — Oggi', type: 'work' as const, accent: 'green' as AccentKey, description: <ul><li>Guido l'Innovation Team su iniziative AI, cloud e data engineering: dal pre-sales e opportunity assessment fino ad architettura, delivery di PoC e rilascio in produzione</li><li>Pipeline ML end-to-end per l'analisi dei ticket IT di un'azienda manifatturiera globale: ingestion da ServiceNow, embedding semantici, UMAP, HDBSCAN e orchestrazione LLM su Azure AI Foundry per etichettatura automatica dei topic e generazione della knowledge base</li><li>Progettazione e industrializzazione di una piattaforma SaaS multi-tenant per l'automazione di survey telefoniche: Azure Functions, Azure Speech, LangChain, RAG (Azure Cognitive Search), supporto multilingue (Azure Translator + TTS neurale), isolamento con Entra ID, CI/CD su Azure Pipelines</li><li>Delivery di data pipeline e architetture lakehouse: Medallion su PostgreSQL, PySpark e Microsoft Fabric, integrazioni ERP (REST API Zucchetti, OAuth2)</li></ul> },
+    ],
+  },
+  education: {
+    title: 'Formazione',
+    degreesLabel: 'Titoli di studio',
+    certsLabel: 'Certificazioni',
+    degrees: [
+      { title: 'Laurea Magistrale — Ingegneria Informatica, Cybersecurity', institution: 'Politecnico di Torino', period: 'Gen 2020 — Dic 2023', description: 'Tesi: "Modelling and Analysis of Attacker Behaviour through Graph Construction".' },
+      { title: 'Laurea Triennale — Ingegneria Informatica', institution: 'Università degli Studi di Salerno', period: '2017 — 2020', description: 'Tesi: "Experimental Characterisation of an Ethnicity Recognition System under Partial Occlusion".' },
+      { title: 'Master in Blockchain & Digital Assets', institution: 'MasterZ.', period: 'Gen 2022 — Lug 2022', description: 'Borsa di studio focalizzata su tecnologie distributed ledger, smart contract e digital asset.' },
+    ],
+    certifications: [] as { name: string; issuer: string; date: string; link?: string }[],
+  },
+  contact: {
+    title: 'Contattami',
+    subtitle: 'Sono sempre aperto a nuove opportunità, collaborazioni o anche solo due chiacchiere.',
+    items: [
+      { icon: 'email',    label: 'Email',    value: 'marcobarca1995@gmail.com', href: 'mailto:marcobarca1995@gmail.com' },
+      { icon: 'phone',    label: 'Telefono', value: '+39 340 644 7085',         href: 'tel:+393406447085' },
+      { icon: 'github',   label: 'GitHub',   value: 'github.com/marcobarca',    href: 'https://github.com/marcobarca' },
+      { icon: 'linkedin', label: 'LinkedIn', value: 'in/marco-barca',           href: 'https://www.linkedin.com/in/marco-barca-9a6b49a5/' },
+    ],
+  },
+};
+
+const CONTENT: Record<Lang, typeof CONTENT_EN> = { en: CONTENT_EN, it: CONTENT_IT };
 
 /* ── Typewriter hook ───────────────────────────────────────────────── */
 function useTyped(text: string, start: boolean, speed = 32) {
@@ -395,7 +452,7 @@ function WorkProjectCard({
 }
 
 /* ── Work Project Modal ────────────────────────────────────────────── */
-function WorkProjectModal({ project, backLabel, onClose }: { project: import('./workProjects').WorkProject; backLabel: string; onClose: () => void }) {
+function WorkProjectModal({ project, labels, backLabel, onClose }: { project: import('./workProjects').WorkProject; labels: { customer: string; company: string; period: string; tags: string }; backLabel: string; onClose: () => void }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -421,7 +478,7 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: import('./
           <dl className="modal-kv">
             {project.client && (
               <>
-                <dt>Customer:</dt>
+                <dt>{labels.customer}</dt>
                 <dd>{project.clientUrl
                   ? <a href={project.clientUrl} target="_blank" rel="noreferrer" className="project-link">{project.client} ↗</a>
                   : project.client}</dd>
@@ -429,7 +486,7 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: import('./
             )}
             {project.company && (
               <>
-                <dt>Company:</dt>
+                <dt>{labels.company}</dt>
                 <dd>{project.companyUrl
                   ? <a href={project.companyUrl} target="_blank" rel="noreferrer" className="project-link">{project.company} ↗</a>
                   : project.company}</dd>
@@ -437,13 +494,13 @@ function WorkProjectModal({ project, backLabel, onClose }: { project: import('./
             )}
             {project.period && (
               <>
-                <dt>Period:</dt>
+                <dt>{labels.period}</dt>
                 <dd>{project.period}</dd>
               </>
             )}
             {project.tags.length > 0 && (
               <>
-                <dt>Tags:</dt>
+                <dt>{labels.tags}</dt>
                 <dd className="tags-line">[{project.tags.join(', ')}]</dd>
               </>
             )}
@@ -503,7 +560,21 @@ function PostModal({ post, backLabel, onClose }: { post: Post; backLabel: string
 
 /* ── App ───────────────────────────────────────────────────────────── */
 export default function App() {
-  const c = CONTENT;
+  const [lang, setLang] = useState<Lang>(() => {
+    try {
+      const saved = localStorage.getItem('mb-lang');
+      if (saved === 'it' || saved === 'en') return saved;
+    } catch { /* private mode */ }
+    return navigator.language?.toLowerCase().startsWith('it') ? 'it' : 'en';
+  });
+  const switchLang = (l: Lang) => {
+    setLang(l);
+    try { localStorage.setItem('mb-lang', l); } catch { /* private mode */ }
+  };
+  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+
+  const c = CONTENT[lang];
+  const projects = workProjects[lang];
 
   const [booting, setBooting] = useState(() => {
     try { return !sessionStorage.getItem('mb-booted'); } catch { return false; }
@@ -531,7 +602,7 @@ export default function App() {
 
   const [hoveredProj, setHoveredProj] = useState<number | null>(null);
   const [selectedWorkSlug, setSelectedWorkSlug] = useState<string | null>(null);
-  const selectedWorkProject = selectedWorkSlug ? workProjects.find(p => p.slug === selectedWorkSlug) ?? null : null;
+  const selectedWorkProject = selectedWorkSlug ? projects.find(p => p.slug === selectedWorkSlug) ?? null : null;
   const [projOffsets, setProjOffsets] = useState({ paddingTop: 0, npoMarginTop: 0 });
 
   useEffect(() => {
@@ -661,8 +732,25 @@ export default function App() {
             ))}
           </div>
 
-          {/* Right: hamburger (mobile only) */}
+          {/* Right: language switch + hamburger (mobile only) */}
           <div className="nav-right">
+            <div className="lang-switch" role="group" aria-label="Language">
+              <button
+                className={`lang-btn ${lang === 'it' ? 'active' : ''}`}
+                onClick={() => switchLang('it')}
+                aria-pressed={lang === 'it'}
+              >
+                ITA
+              </button>
+              <span className="lang-sep" aria-hidden>/</span>
+              <button
+                className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+                onClick={() => switchLang('en')}
+                aria-pressed={lang === 'en'}
+              >
+                ENG
+              </button>
+            </div>
             <button
               className={`nav-hamburger ${mobileOpen ? 'open' : ''}`}
               onClick={() => setMobileOpen(o => !o)}
@@ -685,15 +773,15 @@ export default function App() {
             <p className="hero-eyebrow"><span className="t-prompt">~$ </span>whoami</p>
 
             <h1 className="hero-name">{heroTyped}<span className="hero-cursor" /></h1>
-            <p className={`hero-subtitle hero-reveal ${heroDone ? 'shown' : ''}`}>Computer Engineer · Cloud & AI Solution Architect</p>
+            <p className={`hero-subtitle hero-reveal ${heroDone ? 'shown' : ''}`}>{c.hero.subtitle}</p>
 
             <div className={`hero-badge hero-reveal ${heroDone ? 'shown' : ''}`}>
               <span className="hero-badge-dot" />
-              Open to collaborations
+              {c.hero.badge}
             </div>
 
             <div className={`hero-cta hero-reveal ${heroDone ? 'shown' : ''}`}>
-              <a className="btn-primary" href="/CV-Marco-Barca.pdf" download aria-label="Download CV">Download CV</a>
+              <a className="btn-primary" href="/CV-Marco-Barca.pdf" download aria-label={c.hero.cv}>{c.hero.cv}</a>
               <div className="hero-social">
                 <a href="https://github.com/marcobarca" target="_blank" rel="noreferrer" className="hero-social-link" aria-label="GitHub">
                   <img src={githubLogo} alt="GitHub" />
@@ -792,8 +880,8 @@ export default function App() {
             <p className="exp-col-label exp-col-label--mobile-only">{c.experience.workProjectsLabel}</p>
             <div style={{ paddingTop: projOffsets.paddingTop }}>
               {/* V3 project group */}
-              {workProjects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, client, period, tags }) => {
-                const idx = workProjects.findIndex(p => p.slug === slug);
+              {projects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, client, period, tags }) => {
+                const idx = projects.findIndex(p => p.slug === slug);
                 return (
                   <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags}
                     accent="purple"
@@ -805,8 +893,8 @@ export default function App() {
               })}
               {/* NPO project group */}
               <div ref={npoGroupRef} className="npo-proj-group" style={{ marginTop: projOffsets.npoMarginTop, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {workProjects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, client, period, tags }) => {
-                  const idx = workProjects.findIndex(p => p.slug === slug);
+                {projects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, client, period, tags }) => {
+                  const idx = projects.findIndex(p => p.slug === slug);
                   return (
                     <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags}
                       accent="green"
@@ -917,7 +1005,7 @@ export default function App() {
         <PostModal post={selectedPost} backLabel={c.blog.back} onClose={() => setSelectedSlug(null)} />
       )}
       {selectedWorkProject && (
-        <WorkProjectModal project={selectedWorkProject} backLabel={c.blog.back} onClose={() => setSelectedWorkSlug(null)} />
+        <WorkProjectModal project={selectedWorkProject} labels={c.modal} backLabel={c.blog.back} onClose={() => setSelectedWorkSlug(null)} />
       )}
 
       {/* ── Contact ── */}
@@ -939,21 +1027,6 @@ export default function App() {
           ))}
         </div>
       </Section>
-
-      {/* ── Footer ── */}
-      <footer className="footer">
-        <div className="footer-inner">
-          <p>{c.footer} <span className="heart">♥</span> {c.footerBy} <strong>Marco Barca</strong></p>
-          <div className="footer-social">
-            <a href="https://github.com/marcobarca" target="_blank" rel="noreferrer" aria-label="GitHub">
-              <img src={githubLogo} alt="GitHub" />
-            </a>
-            <a href="https://www.linkedin.com/in/marco-barca-9a6b49a5/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-              <img src={linkedinLogo} alt="LinkedIn" />
-            </a>
-          </div>
-        </div>
-      </footer>
 
       {/* ── tmux-style status bar ── */}
       <div className="status-bar" aria-hidden>
