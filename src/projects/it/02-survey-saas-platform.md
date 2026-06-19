@@ -1,9 +1,11 @@
 ---
-title: "Piattaforma SaaS per Survey"
+title: "AiReporter"
 tags: ["Azure Functions", "LangChain", "RAG", "Azure Speech", "Azure AI Foundry"]
 period: "Lug 2024 — In corso"
 company: "NPO Torino s.r.l."
 companyUrl: "https://www.nposervices.com/"
+client: "AiReporter"
+clientUrl: "https://aireporter.it"
 ---
 
 - Architettura serverless event-driven (Azure Functions, Azure Communication Services) che orchestra le chiamate in uscita end-to-end senza intervento umano

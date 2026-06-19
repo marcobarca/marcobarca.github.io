@@ -4,6 +4,7 @@ tags: ["PySpark", "Microsoft Fabric", "PostgreSQL", "OAuth2", "Medallion"]
 period: "Feb 2024 — In corso"
 company: "NPO Torino s.r.l."
 companyUrl: "https://www.nposervices.com/"
+client: "Winkler s.r.l."
 ---
 
 - Integrazione ERP con le REST API di Zucchetti (OAuth2) per un'ingestion dati affidabile sui sistemi dei clienti

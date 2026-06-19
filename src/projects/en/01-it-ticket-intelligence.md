@@ -4,6 +4,7 @@ tags: ["Python", "Azure AI Foundry", "HDBSCAN", "UMAP", "ServiceNow"]
 period: "Feb 2024 — Ongoing"
 company: "NPO Torino s.r.l."
 companyUrl: "https://www.nposervices.com/"
+client: "CNH Industrial"
 ---
 
 - Raw data ingestion from ServiceNow APIs, semantic embeddings, UMAP dimensionality reduction, and auto-tuned HDBSCAN unsupervised clustering

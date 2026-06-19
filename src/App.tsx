@@ -7,6 +7,113 @@ import { posts, type Post } from './posts';
 import { workProjects, type Lang } from './workProjects';
 import './projects/App.css';
 
+/* ── Hero terminal-rain canvas ───────────────────────────────────────── */
+const RAIN_CHARS = '01abcdef>$_{};|<>=!~&#'.split('');
+const RAIN_COLORS = [
+  'rgba(139,92,246,VAL)',   // purple
+  'rgba(6,182,212,VAL)',    // cyan
+  'rgba(165,243,252,VAL)',  // light cyan
+  'rgba(16,185,129,VAL)',   // green
+  'rgba(110,231,183,VAL)',  // light green
+];
+
+function HeroRain() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    type Drop = { x: number; y: number; speed: number; colorIdx: number; char: string; opacity: number; size: number };
+    let fg: Drop[] = [];   // primo piano — veloci, grandi, più opachi
+    let bg: Drop[] = [];   // secondo piano — lenti, piccoli, quasi trasparenti
+    let raf: number;
+    let lastTime = 0;
+
+    const makeDrop = (i: number, colW: number, plane: 'fg' | 'bg', canvasH: number): Drop => ({
+      x: i * colW + colW * 0.2,
+      y: Math.random() * -canvasH,
+      speed:    plane === 'fg' ? 0.4 + Math.random() * 0.6 : 0.15 + Math.random() * 0.25,
+      colorIdx: Math.floor(Math.random() * RAIN_COLORS.length),
+      char:     RAIN_CHARS[Math.floor(Math.random() * RAIN_CHARS.length)],
+      opacity:  plane === 'fg' ? 0.55 + Math.random() * 0.35 : 0.2 + Math.random() * 0.2,
+      size:     plane === 'fg' ? 13 : 9,
+    });
+
+    const reset = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      const fgCols = Math.floor(canvas.width / 22);
+      const bgCols = Math.floor(canvas.width / 16);
+      fg = Array.from({ length: fgCols }, (_, i) => makeDrop(i, 22, 'fg', canvas.height));
+      bg = Array.from({ length: bgCols }, (_, i) => makeDrop(i, 16, 'bg', canvas.height));
+    };
+
+    reset();
+    const ro = new ResizeObserver(reset);
+    ro.observe(canvas);
+
+    const draw = (time: number) => {
+      if (time - lastTime < 80) { raf = requestAnimationFrame(draw); return; }
+      lastTime = time;
+
+      ctx.fillStyle = 'rgba(7,7,26,0.18)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Secondo piano — piccoli e lenti
+      ctx.font = '9px "JetBrains Mono", monospace';
+      for (const d of bg) {
+        ctx.fillStyle = RAIN_COLORS[d.colorIdx].replace('VAL', String(d.opacity));
+        ctx.fillText(d.char, d.x, d.y);
+        d.y += d.speed * (6 + Math.random() * 14);
+        d.char = RAIN_CHARS[Math.floor(Math.random() * RAIN_CHARS.length)];
+        if (d.y > canvas.height + 20) {
+          d.y = -20 - Math.random() * canvas.height * 0.5;
+          d.speed   = 0.15 + Math.random() * 0.25;
+          d.colorIdx = Math.floor(Math.random() * RAIN_COLORS.length);
+          d.opacity  = 0.2 + Math.random() * 0.2;
+        }
+      }
+
+      // Primo piano — grandi e veloci
+      ctx.font = '13px "JetBrains Mono", monospace';
+      for (const d of fg) {
+        ctx.fillStyle = RAIN_COLORS[d.colorIdx].replace('VAL', String(d.opacity));
+        ctx.fillText(d.char, d.x, d.y);
+        d.y += d.speed * (8 + Math.random() * 22);
+        d.char = RAIN_CHARS[Math.floor(Math.random() * RAIN_CHARS.length)];
+        if (d.y > canvas.height + 20) {
+          d.y = -20 - Math.random() * canvas.height * 0.5;
+          d.speed   = 0.4 + Math.random() * 0.6;
+          d.colorIdx = Math.floor(Math.random() * RAIN_COLORS.length);
+          d.opacity  = 0.55 + Math.random() * 0.35;
+        }
+      }
+
+      raf = requestAnimationFrame(draw);
+    };
+
+    raf = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute', inset: 0, width: '100%', height: '100%',
+        pointerEvents: 'none',
+        maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%)',
+        WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%)',
+      }}
+    />
+  );
+}
+
 /* ── Color palette for timeline accents ──────────────────────────────── */
 const ACCENT = {
   purple: {
@@ -765,22 +872,17 @@ export default function App() {
 
       {/* ── Hero ── */}
       <section id="hero" className="hero">
-        <div className="hero-bg" />
+        <div className="hero-bg"><HeroRain /></div>
         <div className="hero-layout">
 
           {/* Left: identity */}
           <div className="hero-content">
             <p className="hero-eyebrow"><span className="t-prompt">~$ </span>whoami</p>
 
-            <h1 className="hero-name">{heroTyped}<span className="hero-cursor" /></h1>
+            <h1 className="hero-name">{heroTyped}</h1>
             <p className={`hero-subtitle hero-reveal ${heroDone ? 'shown' : ''}`}>{c.hero.subtitle}</p>
 
-            <div className={`hero-badge hero-reveal ${heroDone ? 'shown' : ''}`}>
-              <span className="hero-badge-dot" />
-              {c.hero.badge}
-            </div>
-
-            <div className={`hero-cta hero-reveal ${heroDone ? 'shown' : ''}`}>
+<div className={`hero-cta hero-reveal ${heroDone ? 'shown' : ''}`}>
               <a className="btn-primary" href="/CV-Marco-Barca.pdf" download aria-label={c.hero.cv}>{c.hero.cv}</a>
               <div className="hero-social">
                 <a href="https://github.com/marcobarca" target="_blank" rel="noreferrer" className="hero-social-link" aria-label="GitHub">
