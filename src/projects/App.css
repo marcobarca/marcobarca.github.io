@@ -87,31 +87,6 @@
   animation: blink 1.6s step-end infinite;
 }
 
-/* ── tmux-style status bar ───────────────────── */
-.status-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 150;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0 0.9rem;
-  background: rgba(10,10,24,0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid var(--border);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  user-select: none;
-}
-
-.sb-session { color: #6ee7b7; white-space: nowrap; }
-.sb-path    { color: #c4b5fd; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sb-time    { color: #64748b; white-space: nowrap; }
-
 /* ── Navbar ──────────────────────────────────── */
 .navbar {
   position: fixed;

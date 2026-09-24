@@ -710,12 +710,6 @@ export default function App() {
   const heroTyped = useTyped(HERO_NAME, !booting, 75);
   const heroDone = heroTyped.length === HERO_NAME.length;
 
-  const [clock, setClock] = useState(() => new Date());
-  useEffect(() => {
-    const id = setInterval(() => setClock(new Date()), 30000);
-    return () => clearInterval(id);
-  }, []);
-
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -1146,13 +1140,6 @@ export default function App() {
           ))}
         </div>
       </Section>
-
-      {/* ── tmux-style status bar ── */}
-      <div className="status-bar" aria-hidden>
-        <span className="sb-session">0:portfolio*</span>
-        <span className="sb-path">~/{activeSection === 'hero' ? '' : activeSection}</span>
-        <span className="sb-time">{clock.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
-      </div>
     </div>
   );
 }
