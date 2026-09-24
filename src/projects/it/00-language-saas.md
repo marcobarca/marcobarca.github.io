@@ -1,7 +1,8 @@
 ---
 title: "SaaS per Lezioni di Lingua"
 tags: ["Spring Boot", "Azure", "Microservices", "React", "Architecture"]
-period: "Gen 2026 — In corso"
+period: "Gen 2026 — Oggi"
+status: "ongoing"
 company: "V3 Advisory"
 companyUrl: "https://v3-advisory.com"
 client: "LanguageBoost"

@@ -1,7 +1,8 @@
 ---
 title: "Lakehouse & Data Pipeline"
 tags: ["PySpark", "Microsoft Fabric", "PostgreSQL", "OAuth2", "Medallion"]
-period: "Feb 2024 — In corso"
+period: "Feb 2024 — Set 2026"
+status: "closed"
 company: "NPO Torino s.r.l."
 companyUrl: "https://www.nposervices.com/"
 client: "Winkler s.r.l."

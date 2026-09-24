@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import githubLogo from './assets/github.svg';
 import linkedinLogo from './assets/linkedin.svg';
 import { posts, type Post } from './posts';
-import { workProjects, type Lang } from './workProjects';
+import { workProjects, type Lang, type ProjectStatus } from './workProjects';
 import './projects/App.css';
 
 /* ── Hero terminal-rain canvas ───────────────────────────────────────── */
@@ -150,7 +150,8 @@ const CONTENT_EN = {
   nav: { about: 'About', posts: 'Posts', experience: 'Experience', side: 'Side Projects', education: 'Education', contact: 'Contact' },
   blog: { title: 'Posts', readMore: 'Read →', minRead: 'min read', back: '← Back to posts', hint: 'click a post to read it' },
   hero: { subtitle: 'Computer Engineer · Cloud & AI Solution Architect', badge: 'Open to collaborations', cv: 'Download CV' },
-  modal: { customer: 'Customer:', company: 'Company:', period: 'Period:', tags: 'Tags:' },
+  modal: { customer: 'Customer:', company: 'Company:', period: 'Period:', tags: 'Tags:', status: 'Status:' },
+  status: { ongoing: 'ongoing', closed: 'completed' },
   about: {
     title: 'About me',
     p1: <p>I'm a <strong>Computer Engineer</strong> specialising in <strong>cloud architecture</strong>, <strong>generative AI</strong>, and solution design. I build complex systems, from multi-tenant SaaS platforms to AI pipelines for enterprise clients.</p>,
@@ -206,7 +207,8 @@ const CONTENT_IT: typeof CONTENT_EN = {
   nav: { about: 'Chi sono', posts: 'Post', experience: 'Esperienza', side: 'Side Project', education: 'Formazione', contact: 'Contatti' },
   blog: { title: 'Post', readMore: 'Leggi →', minRead: 'min di lettura', back: '← Torna ai post', hint: 'clicca un post per leggerlo' },
   hero: { subtitle: 'Ingegnere Informatico · Cloud & AI Solution Architect', badge: 'Aperto a collaborazioni', cv: 'Scarica il CV' },
-  modal: { customer: 'Cliente:', company: 'Azienda:', period: 'Periodo:', tags: 'Tag:' },
+  modal: { customer: 'Cliente:', company: 'Azienda:', period: 'Periodo:', tags: 'Tag:', status: 'Stato:' },
+  status: { ongoing: 'in corso', closed: 'completato' },
   about: {
     title: 'Chi sono',
     p1: <p>Sono un <strong>Ingegnere Informatico</strong> specializzato in <strong>architetture cloud</strong>, <strong>AI generativa</strong> e solution design. Costruisco sistemi complessi, da piattaforme SaaS multi-tenant a pipeline AI per clienti enterprise.</p>,
@@ -278,7 +280,6 @@ function useTyped(text: string, start: boolean, speed = 32) {
 
 /* ── Boot screen ───────────────────────────────────────────────────── */
 const BOOT_LINES = [
-  'marcOS v3.0 — bootloader',
   '> init system ............. OK',
   '> mount /dev/career ........ OK',
   '> load modules: azure ai ... OK',
@@ -525,14 +526,25 @@ function AnimatedBeam({
 const fmtDate = (d: string) =>
   new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
+/* ── Project Status Badge ──────────────────────────────────────────── */
+function StatusBadge({ status, label }: { status: ProjectStatus; label: string }) {
+  return (
+    <span className={`status-badge status-badge--${status}`}>
+      <span className="status-dot" aria-hidden="true" />
+      {label}
+    </span>
+  );
+}
+
 /* ── Work Project Card ─────────────────────────────────────────────── */
 function WorkProjectCard({
-  slug, title, company, client, period, tags,
+  slug, title, company, client, period, tags, status, statusLabel,
   accent,
   forwardRef,
   onClick, onMouseEnter, onMouseLeave,
 }: {
   slug: string; title: string; company: string; client?: string; period: string; tags: string[];
+  status: ProjectStatus; statusLabel: string;
   accent: AccentKey;
   forwardRef?: React.Ref<HTMLButtonElement>;
   onClick: () => void; onMouseEnter: () => void; onMouseLeave: () => void;
@@ -542,7 +554,7 @@ function WorkProjectCard({
     <button
       key={slug}
       ref={forwardRef}
-      className="glass-card timeline-card timeline-card--project timeline-card--clickable"
+      className={`glass-card timeline-card timeline-card--project timeline-card--clickable timeline-card--${status}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -550,6 +562,7 @@ function WorkProjectCard({
     >
       <div className="timeline-header">
         <span className="timeline-period">{period}</span>
+        <StatusBadge status={status} label={statusLabel} />
       </div>
       <h3 className="timeline-role">{title}</h3>
       <p className="timeline-company">{company}{client && <> x {client}</>}</p>
@@ -559,7 +572,7 @@ function WorkProjectCard({
 }
 
 /* ── Work Project Modal ────────────────────────────────────────────── */
-function WorkProjectModal({ project, labels, backLabel, onClose }: { project: import('./workProjects').WorkProject; labels: { customer: string; company: string; period: string; tags: string }; backLabel: string; onClose: () => void }) {
+function WorkProjectModal({ project, labels, statusLabel, backLabel, onClose }: { project: import('./workProjects').WorkProject; labels: { customer: string; company: string; period: string; tags: string; status: string }; statusLabel: string; backLabel: string; onClose: () => void }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -605,6 +618,8 @@ function WorkProjectModal({ project, labels, backLabel, onClose }: { project: im
                 <dd>{project.period}</dd>
               </>
             )}
+            <dt>{labels.status}</dt>
+            <dd><StatusBadge status={project.status} label={statusLabel} /></dd>
             {project.tags.length > 0 && (
               <>
                 <dt>{labels.tags}</dt>
@@ -984,10 +999,10 @@ export default function App() {
             <p className="exp-col-label exp-col-label--mobile-only">{c.experience.workProjectsLabel}</p>
             <div style={{ paddingTop: projOffsets.paddingTop }}>
               {/* V3 project group */}
-              {projects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, client, period, tags }) => {
+              {projects.filter(p => p.company === 'V3 Advisory').map(({ slug, title, company, client, period, tags, status }) => {
                 const idx = projects.findIndex(p => p.slug === slug);
                 return (
-                  <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags}
+                  <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags} status={status} statusLabel={c.status[status]}
                     accent="purple"
                     forwardRef={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.Ref<HTMLButtonElement>}
                     onClick={() => setSelectedWorkSlug(slug)}
@@ -997,10 +1012,10 @@ export default function App() {
               })}
               {/* NPO project group */}
               <div ref={npoGroupRef} className="npo-proj-group" style={{ marginTop: projOffsets.npoMarginTop, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {projects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, client, period, tags }) => {
+                {projects.filter(p => p.company !== 'V3 Advisory').map(({ slug, title, company, client, period, tags, status }) => {
                   const idx = projects.findIndex(p => p.slug === slug);
                   return (
-                    <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags}
+                    <WorkProjectCard key={slug} slug={slug} title={title} company={company} client={client} period={period} tags={tags} status={status} statusLabel={c.status[status]}
                       accent="green"
                       forwardRef={[proj0Ref, proj1Ref, proj2Ref, proj3Ref][idx] as React.Ref<HTMLButtonElement>}
                       onClick={() => setSelectedWorkSlug(slug)}
@@ -1109,7 +1124,7 @@ export default function App() {
         <PostModal post={selectedPost} backLabel={c.blog.back} onClose={() => setSelectedSlug(null)} />
       )}
       {selectedWorkProject && (
-        <WorkProjectModal project={selectedWorkProject} labels={c.modal} backLabel={c.blog.back} onClose={() => setSelectedWorkSlug(null)} />
+        <WorkProjectModal project={selectedWorkProject} labels={c.modal} statusLabel={c.status[selectedWorkProject.status]} backLabel={c.blog.back} onClose={() => setSelectedWorkSlug(null)} />
       )}
 
       {/* ── Contact ── */}
@@ -1134,7 +1149,7 @@ export default function App() {
 
       {/* ── tmux-style status bar ── */}
       <div className="status-bar" aria-hidden>
-        <span className="sb-session">[marcOS] 0:portfolio*</span>
+        <span className="sb-session">0:portfolio*</span>
         <span className="sb-path">~/{activeSection === 'hero' ? '' : activeSection}</span>
         <span className="sb-time">{clock.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
       </div>

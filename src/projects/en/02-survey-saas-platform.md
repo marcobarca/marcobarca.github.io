@@ -1,7 +1,8 @@
 ---
 title: "AiReporter"
 tags: ["Azure Functions", "LangChain", "RAG", "Azure Speech", "Azure AI Foundry"]
-period: "Jul 2024 — Ongoing"
+period: "Jul 2024 — Present"
+status: "ongoing"
 company: "NPO Torino s.r.l."
 companyUrl: "https://www.nposervices.com/"
 client: "AiReporter"

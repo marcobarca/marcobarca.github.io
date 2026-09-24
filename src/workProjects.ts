@@ -7,8 +7,11 @@ export interface WorkProject {
   clientUrl: string;
   tags: string[];
   period: string;
+  status: ProjectStatus;
   body: string;
 }
+
+export type ProjectStatus = 'ongoing' | 'closed';
 
 function parseFrontmatter(raw: string): { data: Record<string, unknown>; content: string } {
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
@@ -52,6 +55,7 @@ function buildProjects(lang: Lang): WorkProject[] {
         clientUrl: (data.clientUrl as string) ?? '',
         tags:    (data.tags    as string[]) ?? [],
         period:  (data.period  as string) ?? '',
+        status:  ((data.status as string) === 'closed' ? 'closed' : 'ongoing') as ProjectStatus,
         body:    content.trim(),
       };
     });
