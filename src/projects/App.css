@@ -549,7 +549,6 @@
 .hero-social-link img {
   width: 18px;
   height: 18px;
-  filter: invert(1) brightness(0.8);
 }
 
 /* Avatar */
@@ -1027,7 +1026,6 @@
 .project-card-icon-img {
   width: 22px;
   height: 22px;
-  filter: invert(1) brightness(0.5);
 }
 
 .project-card-body {
