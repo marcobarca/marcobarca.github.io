@@ -535,14 +535,14 @@
   display: grid;
   place-items: center;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.25);
+  background: #ffffff;
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
 
 .hero-social-link:hover {
-  border-color: rgba(139,92,246,0.4);
-  background: rgba(139,92,246,0.1);
+  border-color: rgba(139,92,246,0.9);
+  background: #ffffff;
   transform: translateY(-2px);
 }
 
@@ -1026,6 +1026,8 @@
 .project-card-icon-img {
   width: 22px;
   height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
 }
 
 .project-card-body {
@@ -1552,9 +1554,19 @@
   transition: background 0.2s, border-color 0.2s;
 }
 
+.contact-card-icon--brand {
+  background: #ffffff;
+  border-color: rgba(255,255,255,0.25);
+}
+
 .contact-card:hover .contact-card-icon {
   background: rgba(139,92,246,0.18);
   border-color: rgba(139,92,246,0.4);
+}
+
+.contact-card:hover .contact-card-icon--brand {
+  background: #ffffff;
+  border-color: rgba(139,92,246,0.9);
 }
 
 .contact-card-label {
